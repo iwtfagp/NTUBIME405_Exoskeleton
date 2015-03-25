@@ -2,37 +2,67 @@
 #define MY_MAXON_MOTOR_H
 
 #include "Definitions.h"
-
+#include "my_maxon_motor.h"
 #include <iostream>
 #include <string>
 #include <vector>
+#include <QString>
+
+
+//Nonzero if successful; otherwise 0
+#define OK true
+#define NO false
 
 
 class my_maxon_motor
 {
 public:
     my_maxon_motor();
-    bool openDevice();
-    bool openDeviceDlg();
-    void closeDevice();
-    void onHome(unsigned short nodeId = 1, __int8 limitType = HM_NEGATIVE_LIMIT_SWITCH);
-    void onEnableDevice(unsigned short nodeId = 1);
-    void onDisableDevice();
-    void onMove(unsigned short nodeId, long TargetPosition);
-    long GetPosition(unsigned short nodeId = 1);
-    bool GetProtocalInformation(std::vector<std::string>*);
-    bool SetMaxMinFollowingError(double Max,double Min);
-    bool initialization();
-    void onDisableDevice(unsigned short nodeId = 1);
+    bool openDevice(QString *str_ErrorCode);
+    bool closeALLDevice();
+    bool init(int node_Id, double MaxProfileVelocity, double MaxFollowingError, double MaxAcceleration);
+
+    void setEnabled(QString *str_ErrorCode);
+    void setDisabled(QString *str_ErrorCode);
+
+    void calibration(long m_HomeOffset, __int8 limitType, QString *str_ErrorCode);
+    void WaitForHomingAttained(QString *str_ErrorCode);
+
+    void MoveToPosition(double angle, bool absolute_Pos, QString *str_ErrorCode);
 
 
-    static double Qc2Angle(double qc);
-    static double Angle2Qc(double angle);
+    double getPosition(QString *str_ErrorCode);
+    double getVelocity(QString *str_ErrorCode);
+    double getCurrent(QString *str_ErrorCode);
+    bool getEnableState(QString *str_ErrorCode);
+
+
+    int getNodeId(){return this->node_Id;};
+    static double Qc2Angle(double qc){return 360.0/(12800*HarmonicDriverRatio)*qc;}
+    static double Angle2Qc(double angle){return 12800*HarmonicDriverRatio/360.0*angle;}
+
 
 private:
     void* keyHandle;
+    int node_Id;
     static const int HarmonicDriverRatio = 160;
-    static const int MotorNum = 4;
+
+
+
+
+
+
+    //-------------------------------------------------------------------------------------------
+
+
+
+
+
+
+    bool GetProtocalInformation(std::vector<std::string>*);
+
+
+
 
 
 };

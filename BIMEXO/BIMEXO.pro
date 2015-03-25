@@ -24,4 +24,6 @@ FORMS    += qt_exoskeleton.ui
 
 INCLUDEPATH += $$quote(D:\LIB\Qwt-6.1.2\include)
 
-LIBS +=   $$quote(D:\LIB\Qwt-6.1.2\lib\qwt.lib)
+LIBS +=     $$quote(D:\LIB\Qwt-6.1.2\lib\qwt.lib)\
+            -L. \
+            -lEposCmd
