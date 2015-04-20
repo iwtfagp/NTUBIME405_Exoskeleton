@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BIMEXO
 TEMPLATE = app
 
+DEFINES += NOMINMAX
+#DEFINES += NOMINMAX is for include <QDateTime>
 
 SOURCES += main.cpp\
         qt_exoskeleton.cpp \

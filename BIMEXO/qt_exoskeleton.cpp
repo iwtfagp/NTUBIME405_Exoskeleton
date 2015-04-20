@@ -39,10 +39,16 @@ qt_exoskeleton::qt_exoskeleton(QWidget *parent) :
 
 
     timer = new QTimer(this);
+    timer_model = new QTimer(this);
+
+    QObject::connect(timer_model, SIGNAL(timeout()), this, SLOT(updateModel()));
+    timer_model->setInterval(50);
+
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(updateView()));
     timer->setInterval(100);
     timer->start();
 }
+
 
 qt_exoskeleton::~qt_exoskeleton()
 {
@@ -110,11 +116,6 @@ void qt_exoskeleton::on_pushButton_enable_clicked()
 {
     QString str_ErrorCode;
 
-
-
-
-
-
     if(ui->pushButton_enable->isChecked())
     {
         ui->pushButton_enable->setText("Disable");
@@ -123,8 +124,6 @@ void qt_exoskeleton::on_pushButton_enable_clicked()
         ui->pushButton_sitting->setEnabled(true);
         ui->pushButton_extension->setEnabled(true);
         ui->pushButton_flexion->setEnabled(true);
-
-
 
 
         motor_left_hip->setEnabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
@@ -235,6 +234,8 @@ void qt_exoskeleton::on_pushButton_calibration_clicked()
 
     motor_left_knee->calibration(0, HM_POSITIVE_LIMIT_SWITCH, &str_ErrorCode);
     motor_right_knee->calibration(0, HM_NEGATIVE_LIMIT_SWITCH, &str_ErrorCode);
+    motor_left_knee ->WaitForHomingAttained(&str_ErrorCode);
+    motor_right_knee->WaitForHomingAttained(&str_ErrorCode);
 }
 
 
@@ -290,6 +291,18 @@ void qt_exoskeleton::keyPressEvent(QKeyEvent* event)
         ui->textBrowser->append("Key PageUp Pressed & Start Walking");
         this->on_pushButton_StartModel_clicked();
     }
+    //    if(ui->pushButton_StartModel->isEnabled()){
+    if(event->key() == Qt::Key_Down)
+    {
+        ui->textBrowser->append("Feel Bad");
+        this->on_pushButton_record_clicked();
+    }
+    if(event->key() == Qt::Key_Up)
+    {
+        ui->textBrowser->append("Period");
+        this->on_pushButton_period_clicked();
+    }
+    //    }
 }
 
 void qt_exoskeleton::on_pushButton_StartModel_clicked()
@@ -298,65 +311,66 @@ void qt_exoskeleton::on_pushButton_StartModel_clicked()
     static int step = 0;
     if(step >= model_left_hip_angle_mean.size())
         step = 0;
+    if(ui->checkBox_motor_enable->isChecked())
+    {
+        if(motor_left_hip->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_left_hip_angle_mean.at(step) > left_hip_flexion_limit-5){
+                target_position = left_hip_flexion_limit-5;
+            }else if(model_left_hip_angle_mean.at(step) < left_hip_extension_limit+5){
+                target_position = left_hip_extension_limit+5;
+            }else{
+                target_position = model_left_hip_angle_mean.at(step);
+            }
+            target_position *= -1.0; //if this is left
+            ui->textBrowser->append("left_hip = " + QString::number(model_left_hip_angle_mean.at(step)));
+            motor_left_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_left_hip FAIL!!!!!");}
 
-    if(motor_left_hip->getEnableState(&str_ErrorCode)){
-        double target_position;
-        if(model_left_hip_angle_mean.at(step) > left_hip_flexion_limit-5){
-            target_position = left_hip_flexion_limit-5;
-        }else if(model_left_hip_angle_mean.at(step) < left_hip_extension_limit+5){
-            target_position = left_hip_extension_limit+5;
-        }else{
-            target_position = model_left_hip_angle_mean.at(step);
-        }
-        target_position *= -1.0; //if this is left
-        ui->textBrowser->append("left_hip = " + QString::number(model_left_hip_angle_mean.at(step)));
-        motor_left_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
-    else{
-        ui->textBrowser->append("motor_left_hip FAIL!!!!!");}
+        if(motor_right_hip->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_right_hip_angle_mean.at(step) > right_hip_flexion_limit-5){
+                target_position = right_hip_flexion_limit-5;
+            }else if(model_right_hip_angle_mean.at(step) < right_hip_extension_limit+5){
+                target_position = right_hip_extension_limit+5;
+            }else{
+                target_position = model_right_hip_angle_mean.at(step);
+            }
+            ui->textBrowser->append("right_hip = " + QString::number(model_right_hip_angle_mean.at(step)));
+            motor_right_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_right_hip FAIL!!!!!");}
 
-    if(motor_right_hip->getEnableState(&str_ErrorCode)){
-        double target_position;
-        if(model_right_hip_angle_mean.at(step) > right_hip_flexion_limit-5){
-            target_position = right_hip_flexion_limit-5;
-        }else if(model_right_hip_angle_mean.at(step) < right_hip_extension_limit+5){
-            target_position = right_hip_extension_limit+5;
-        }else{
-            target_position = model_right_hip_angle_mean.at(step);
-        }
-        ui->textBrowser->append("right_hip = " + QString::number(model_right_hip_angle_mean.at(step)));
-        motor_right_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
-    else{
-        ui->textBrowser->append("motor_right_hip FAIL!!!!!");}
-
-    if(motor_left_knee->getEnableState(&str_ErrorCode)){
-        double target_position;
-        if(model_left_knee_angle_mean.at(step) > left_knee_flexion_limit-5){
-            target_position = left_knee_flexion_limit-5;
-        }else if(model_left_knee_angle_mean.at(step) < left_knee_extension_limit+5){
-            target_position = left_knee_extension_limit+5;
-        }else{
-            target_position = model_left_knee_angle_mean.at(step);
-        }
-        target_position *= -1.0; //if this is left
-        ui->textBrowser->append("left_knee = " + QString::number(model_left_knee_angle_mean.at(step)));
-        motor_left_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
-    else{
-        ui->textBrowser->append("motor_left_knee FAIL!!!!!");}
+        if(motor_left_knee->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_left_knee_angle_mean.at(step) > left_knee_flexion_limit-5){
+                target_position = left_knee_flexion_limit-5;
+            }else if(model_left_knee_angle_mean.at(step) < left_knee_extension_limit+5){
+                target_position = left_knee_extension_limit+5;
+            }else{
+                target_position = model_left_knee_angle_mean.at(step);
+            }
+            target_position *= -1.0; //if this is left
+            ui->textBrowser->append("left_knee = " + QString::number(model_left_knee_angle_mean.at(step)));
+            motor_left_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_left_knee FAIL!!!!!");}
 
         if(motor_right_knee->getEnableState(&str_ErrorCode)){
-        double target_position;
-        if(model_right_knee_angle_mean.at(step) > right_knee_flexion_limit-5){
-            target_position = right_knee_flexion_limit-5;
-        }else if(model_right_knee_angle_mean.at(step) < right_knee_extension_limit+5){
-            target_position = right_knee_extension_limit+5;
-        }else{
-            target_position = model_right_knee_angle_mean.at(step);
-        }
-        ui->textBrowser->append("right_knee = " + QString::number(model_right_knee_angle_mean.at(step)));
-        motor_right_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
-    else{
-        ui->textBrowser->append("motor_right_knee FAIL!!!!!");}
-
+            double target_position;
+            if(model_right_knee_angle_mean.at(step) > right_knee_flexion_limit-5){
+                target_position = right_knee_flexion_limit-5;
+            }else if(model_right_knee_angle_mean.at(step) < right_knee_extension_limit+5){
+                target_position = right_knee_extension_limit+5;
+            }else{
+                target_position = model_right_knee_angle_mean.at(step);
+            }
+            ui->textBrowser->append("right_knee = " + QString::number(model_right_knee_angle_mean.at(step)));
+            motor_right_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_right_knee FAIL!!!!!");}
+    }
 
     ui->textBrowser->append("step = " + QString::number(step));
     step += 100;
@@ -366,13 +380,23 @@ void qt_exoskeleton::on_pushButton_StartModel_clicked()
 void qt_exoskeleton::on_pushButton_loadModel_clicked()
 {
 
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),"/",tr("Model (*.model)"));
+    if(!ui->checkBox_continue->isChecked())
+    {
+        filename = QFileDialog::getOpenFileName(this, tr("Open File"),"/",tr("Model (*.model)"));
+
+        dir_path = filename.mid(0,filename.lastIndexOf('/')+1);
+
+        ui->checkBox_continue->setChecked(true);
+    }
+
 
     if(filename.isEmpty())
     {
         ui->textBrowser->append("No File");
+        ui->checkBox_continue->setChecked(false);
         return;
     }
+
 
     QFile file(filename);
 
@@ -383,6 +407,8 @@ void qt_exoskeleton::on_pushButton_loadModel_clicked()
     }else{
         ui->textBrowser->append("open file OK");
     }
+
+
     model_left_hip_angle_mean.clear();
     model_right_hip_angle_mean.clear();
     model_left_knee_angle_mean.clear();
@@ -396,16 +422,40 @@ void qt_exoskeleton::on_pushButton_loadModel_clicked()
         QString line = file.readLine();
         QStringList qs_list = line.split(',');
 
-        model_left_hip_angle_mean.push_back(qs_list.at(0).toDouble());
-        model_left_hip_angle_std.push_back(qs_list.at(1).toDouble());
-        model_right_hip_angle_mean.push_back(qs_list.at(2).toDouble());
-        model_right_hip_angle_std.push_back(qs_list.at(3).toDouble());
-        model_left_knee_angle_mean.push_back(qs_list.at(4).toDouble());
-        model_left_knee_angle_std.push_back(qs_list.at(5).toDouble());
-        model_right_knee_angle_mean.push_back(qs_list.at(6).toDouble());
-        model_right_knee_angle_std.push_back(qs_list.at(7).toDouble());
+        model_left_hip_angle_mean.push_back(qs_list.at(1).toDouble());
+        model_left_hip_angle_std.push_back(qs_list.at(2).toDouble());
+        model_right_hip_angle_mean.push_back(qs_list.at(3).toDouble());
+        model_right_hip_angle_std.push_back(qs_list.at(4).toDouble());
+        model_left_knee_angle_mean.push_back(qs_list.at(5).toDouble());
+        model_left_knee_angle_std.push_back(qs_list.at(6).toDouble());
+        model_right_knee_angle_mean.push_back(qs_list.at(7).toDouble());
+        model_right_knee_angle_std.push_back(qs_list.at(8).toDouble());
     }
+    if(ui->checkBox_RNG->isChecked())
+    {
+        for(int i = 0; i < model_left_hip_angle_mean.size(); i++){
+            std::default_random_engine generator_left_hip((unsigned int)time(0));
+            std::normal_distribution<double> distribution_left_hip(model_left_hip_angle_mean.at(i),model_left_hip_angle_std.at(i));
+            double model_left_hip_angle_mean_new = distribution_left_hip(generator_left_hip);
+            model_left_hip_angle_mean.at(i) = model_left_hip_angle_mean_new;
 
+            std::default_random_engine generator_left_knee((unsigned int)time(0));
+            std::normal_distribution<double> distribution_left_knee(model_left_knee_angle_mean.at(i),model_left_knee_angle_std.at(i));
+            double model_left_knee_angle_mean_new = distribution_left_knee(generator_left_knee);
+            model_left_knee_angle_mean.at(i) = model_left_knee_angle_mean_new;
+
+            std::default_random_engine generator_right_hip((unsigned int)time(0));
+            std::normal_distribution<double> distribution_right_hip(model_right_hip_angle_mean.at(i),model_right_hip_angle_std.at(i));
+            double model_right_hip_angle_mean_new = distribution_right_hip(generator_right_hip);
+            model_right_hip_angle_mean.at(i) = model_right_hip_angle_mean_new;
+
+            std::default_random_engine generator_right_knee((unsigned int)time(0));
+            std::normal_distribution<double> distribution_right_knee(model_right_knee_angle_mean.at(i),model_right_knee_angle_std.at(i));
+            double model_right_knee_angle_mean_new = distribution_right_knee(generator_right_knee);
+            model_right_knee_angle_mean.at(i) = model_right_knee_angle_mean_new;
+
+        }
+    }
 
 
 
@@ -443,4 +493,149 @@ void qt_exoskeleton::on_pushButton_loadModel_clicked()
 
     ui->pushButton_StartModel->setEnabled(true);
 
+}
+
+void qt_exoskeleton::on_pushButton_record_clicked()
+{
+    ui->pushButton_record->setDown(true);
+}
+void qt_exoskeleton::on_pushButton_period_clicked()
+{
+    if(!timer_model->isActive()){
+        timer_model->start();
+
+        if(!dir_path.isEmpty())
+        {
+            //    get current date
+            QLocale locale  = QLocale(QLocale::English);
+            QDate date = QDate::currentDate();
+            QString dateString = locale.toString(date, "yyyyMMdd");
+            QTime time = QTime::currentTime();
+            QString timeString = locale.toString(time, "hhmmss");
+            QString username = ui->lineEdit_username->text();
+            QString filepath = dir_path + username + "_" + dateString + "_" + timeString + "_forML" +".model";
+
+            ui->textBrowser->append("open a new filepath");
+            ui->textBrowser->append(filepath);
+
+            file_new_model = new QFile(filepath);
+            file_new_model->open(QIODevice::WriteOnly | QIODevice::Text);
+
+            for(int i = 0; i < data_number; i++)
+            {
+                ML_lable[i] = 0;
+            }
+        }
+    }
+
+}
+void qt_exoskeleton::updateModel()
+{
+    static int step = 0;
+
+    int check = ui->pushButton_record->isDown();
+    ui->pushButton_record->setDown(false);
+    ui->textBrowser->append(QString::number(step) + "\t = " + QString::number(check));
+    ML_lable[step] = check;
+
+
+
+
+    QString str_ErrorCode;
+    //enable the motor
+    if(ui->checkBox_motor_enable->isChecked())
+    {
+        if(motor_left_hip->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_left_hip_angle_mean.at(step) > left_hip_flexion_limit-5){
+                target_position = left_hip_flexion_limit-5;
+            }else if(model_left_hip_angle_mean.at(step) < left_hip_extension_limit+5){
+                target_position = left_hip_extension_limit+5;
+            }else{
+                target_position = model_left_hip_angle_mean.at(step);
+            }
+            target_position *= -1.0; //if this is left
+            ui->textBrowser->append("left_hip = " + QString::number(model_left_hip_angle_mean.at(step)));
+            motor_left_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_left_hip FAIL!!!!!");}
+
+        if(motor_right_hip->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_right_hip_angle_mean.at(step) > right_hip_flexion_limit-5){
+                target_position = right_hip_flexion_limit-5;
+            }else if(model_right_hip_angle_mean.at(step) < right_hip_extension_limit+5){
+                target_position = right_hip_extension_limit+5;
+            }else{
+                target_position = model_right_hip_angle_mean.at(step);
+            }
+            ui->textBrowser->append("right_hip = " + QString::number(model_right_hip_angle_mean.at(step)));
+            motor_right_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_right_hip FAIL!!!!!");}
+
+        if(motor_left_knee->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_left_knee_angle_mean.at(step) > left_knee_flexion_limit-5){
+                target_position = left_knee_flexion_limit-5;
+            }else if(model_left_knee_angle_mean.at(step) < left_knee_extension_limit+5){
+                target_position = left_knee_extension_limit+5;
+            }else{
+                target_position = model_left_knee_angle_mean.at(step);
+            }
+            target_position *= -1.0; //if this is left
+            ui->textBrowser->append("left_knee = " + QString::number(model_left_knee_angle_mean.at(step)));
+            motor_left_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_left_knee FAIL!!!!!");}
+
+        if(motor_right_knee->getEnableState(&str_ErrorCode)){
+            double target_position;
+            if(model_right_knee_angle_mean.at(step) > right_knee_flexion_limit-5){
+                target_position = right_knee_flexion_limit-5;
+            }else if(model_right_knee_angle_mean.at(step) < right_knee_extension_limit+5){
+                target_position = right_knee_extension_limit+5;
+            }else{
+                target_position = model_right_knee_angle_mean.at(step);
+            }
+            ui->textBrowser->append("right_knee = " + QString::number(model_right_knee_angle_mean.at(step)));
+            motor_right_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+        else{
+            ui->textBrowser->append("motor_right_knee FAIL!!!!!");}
+
+    }
+
+
+
+
+
+
+
+    step += ui->doubleSpinBox_speed->value();
+    if(step >= model_left_hip_angle_mean.size())
+    {
+        step = 0;
+        timer_model->stop();
+        if(!dir_path.isEmpty())
+        {
+            QTextStream out(file_new_model);
+            for(int i = 0; i<model_left_hip_angle_mean.size(); i++)
+            {
+                out << ML_lable[i] << ",";
+                out << model_left_hip_angle_mean.at(i) << ","
+                    << model_left_hip_angle_std.at(i) << ","
+                    << model_right_hip_angle_mean.at(i) << ","
+                    << model_right_hip_angle_std.at(i) << ","
+                    << model_left_knee_angle_mean.at(i) << ","
+                    << model_left_knee_angle_std.at(i) << ","
+                    << model_right_knee_angle_mean.at(i) << ","
+                    << model_right_knee_angle_std.at(i) <<endl;
+            }
+            ui->textBrowser->append("ML_model save");
+            file_new_model->close();
+        }
+        this->on_pushButton_loadModel_clicked();
+    }
+
+    //    count += 5000;
 }
