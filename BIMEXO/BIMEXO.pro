@@ -16,11 +16,13 @@ DEFINES += NOMINMAX
 
 SOURCES += main.cpp\
         qt_exoskeleton.cpp \
-    my_maxon_motor.cpp
+    my_maxon_motor.cpp \
+    mpu_9150.cpp
 
 HEADERS  += qt_exoskeleton.h \
     my_maxon_motor.h \
-    Definitions.h
+    Definitions.h \
+    mpu_9150.h
 
 FORMS    += qt_exoskeleton.ui
 

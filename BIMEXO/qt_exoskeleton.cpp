@@ -1,7 +1,7 @@
 #include "qt_exoskeleton.h"
 #include "ui_qt_exoskeleton.h"
 
-
+#define PI 3.14159265
 
 
 qt_exoskeleton::qt_exoskeleton(QWidget *parent) :
@@ -36,6 +36,47 @@ qt_exoskeleton::qt_exoskeleton(QWidget *parent) :
     curve_right_hip.setTitle( "Right Hip" );
     curve_left_knee.setTitle( "Left Knee" );
     curve_right_knee.setTitle( "Right Knee" );
+
+
+
+
+    //parameter mode++
+
+
+    //    ui->qwtPlot_motion_model_parameter_sit->setTitle( "Sit" );
+    ui->qwtPlot_motion_model_parameter_sit->setCanvasBackground( Qt::white );
+    //    ui->qwtPlot_motion_model_parameter_sit->setAxisScale( QwtPlot::yLeft, 0.0, 10.0 );
+    ui->qwtPlot_motion_model_parameter_sit->insertLegend( new QwtLegend() );
+    //    sit.curve_left_hip.setTitle("Left Hip");
+    //    sit.curve_right_hip.setTitle("Right Hip");
+    //    sit.curve_left_knee.setTitle("Left Knee");
+    //    sit.curve_right_knee.setTitle("Right Knee");
+
+    //    ui->qwtPlot_motion_model_parameter_stand->setTitle( "Down" );
+    ui->qwtPlot_motion_model_parameter_stand->setCanvasBackground( Qt::white );
+    //    ui->qwtPlot_motion_model_parameter_stand->setAxisScale( QwtPlot::yLeft, 0.0, 100.0 );
+    ui->qwtPlot_motion_model_parameter_stand->insertLegend( new QwtLegend() );
+    //    stand.curve_left_hip.setTitle("Left Hip");
+    //    stand.curve_right_hip.setTitle("Right Hip");
+    //    stand.curve_left_knee.setTitle("Left Knee");
+    //    stand.curve_right_knee.setTitle("Right Knee");
+
+    //    ui->qwtPlot_motion_model_parameter_walk->setTitle( "Down" );
+    ui->qwtPlot_motion_model_parameter_walk->setCanvasBackground( Qt::white );
+    //    ui->qwtPlot_motion_model_parameter_walk->setAxisScale( QwtPlot::yLeft, 0.0, 10.0 );
+    ui->qwtPlot_motion_model_parameter_walk->insertLegend( new QwtLegend() );
+    //    walk.curve_left_hip.setTitle("Left Hip");
+    //    walk.curve_right_hip.setTitle("Right Hip");
+    //    walk.curve_left_knee.setTitle("Left Knee");
+    //    walk.curve_right_knee.setTitle("Right Knee");
+    //parameter mode--
+
+
+    //Set Timer
+    timer_mpu = new QTimer(this);
+    timer_mpu->stop();
+    timer_mpu->setInterval(20);
+    QObject::connect(timer_mpu, SIGNAL(timeout()), this, SLOT(updateMpuView()));
 
 
     timer = new QTimer(this);
@@ -73,10 +114,6 @@ void qt_exoskeleton::on_pushButton_connect_clicked()
     ui->textBrowser->append("connect OK");
     ui->label_connection->setText("OK");
     ui->label_connection->setStyleSheet("QLabel { background-color : green; color : black; }");
-
-
-
-
 
     //init the node ID
     motor_left_hip->init(1, MaxProfileVelocity, MaxFollowingError, MaxAcceleration);
@@ -125,7 +162,6 @@ void qt_exoskeleton::on_pushButton_enable_clicked()
         ui->pushButton_extension->setEnabled(true);
         ui->pushButton_flexion->setEnabled(true);
 
-
         motor_left_hip->setEnabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
         motor_right_hip->setEnabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
         motor_left_knee->setEnabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
@@ -140,8 +176,6 @@ void qt_exoskeleton::on_pushButton_enable_clicked()
         ui->pushButton_sitting->setDisabled(true);
         ui->pushButton_extension->setDisabled(true);
         ui->pushButton_flexion->setDisabled(true);
-
-
 
         motor_left_hip->setDisabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
         motor_right_hip->setDisabled(&str_ErrorCode);ui->textBrowser->append(str_ErrorCode);
@@ -539,12 +573,12 @@ void qt_exoskeleton::updateModel()
     ML_lable[step] = check;
 
 
-
-
     QString str_ErrorCode;
     //enable the motor
+    //限制動作部分
     if(ui->checkBox_motor_enable->isChecked())
     {
+        //左腳髖關節的角度限制
         if(motor_left_hip->getEnableState(&str_ErrorCode)){
             double target_position;
             if(model_left_hip_angle_mean.at(step) > left_hip_flexion_limit-5){
@@ -605,12 +639,6 @@ void qt_exoskeleton::updateModel()
 
     }
 
-
-
-
-
-
-
     step += ui->doubleSpinBox_speed->value();
     if(step >= model_left_hip_angle_mean.size())
     {
@@ -638,4 +666,224 @@ void qt_exoskeleton::updateModel()
     }
 
     //    count += 5000;
+}
+
+void qt_exoskeleton::on_pushButton_parameter_model_clicked()
+{
+
+    const int gait_number = 1000;
+
+
+
+    //walking
+    const int phase = 50;
+    walk.hip_sin_x = 0;
+    walk.hip_sin_y = 10;
+    walk.hip_sin_amp = 30;
+
+    walk.knee_sin_x = 80;
+    walk.knee_sin_y = 10;
+    walk.knee_sin_amp = 65;
+    walk.knee_gaussian_x = 20;
+    walk.knee_gaussian_y = 0;
+    walk.knee_gaussian_amp = 10;
+    walk.knee_gaussian_sigma = 20;
+
+    sin_wave(&walk.left_hip_angle,
+             walk.hip_sin_amp,
+             walk.hip_sin_x,
+             walk.hip_sin_y,
+             gait_number);
+
+    sin_wave(&walk.left_knee_angle,
+             walk.knee_sin_amp,
+             walk.knee_sin_x,
+             walk.knee_sin_y,
+             gait_number);
+
+    gaussian_wave(&walk.left_knee_angle_gauss,
+                  walk.knee_gaussian_amp,
+                  walk.knee_gaussian_x,
+                  walk.knee_gaussian_y,
+                  walk.knee_gaussian_sigma,
+                  gait_number);
+
+    wave_max(&walk.left_knee_angle, &walk.left_knee_angle_gauss);
+
+    sin_wave(&walk.right_hip_angle,
+             walk.hip_sin_amp,
+             walk.hip_sin_x+phase,
+             walk.hip_sin_y,
+             gait_number);
+
+    sin_wave(&walk.right_knee_angle,
+             walk.knee_sin_amp,
+             walk.knee_sin_x+phase,
+             walk.knee_sin_y,
+             gait_number);
+
+    gaussian_wave(&walk.right_knee_angle_gauss,
+                  walk.knee_gaussian_amp,
+                  walk.knee_gaussian_x+phase,
+                  walk.knee_gaussian_y,
+                  walk.knee_gaussian_sigma,
+                  gait_number);
+
+    wave_max(&walk.right_knee_angle, &walk.right_knee_angle_gauss);
+
+    wave_display(&walk, gait_number);
+
+
+
+}
+
+void qt_exoskeleton::sin_wave(std::vector<double>* data, double amp, double x, double y, int total)
+{
+    data->clear();
+
+    for(int i = 0; i<total; i++)
+    {
+        data->push_back((amp-y)*sin(((double(i)/total-(x+75)/100.0)*360.0)*PI/180)+y);
+    }
+}
+void qt_exoskeleton::gaussian_wave(std::vector<double>* data, double amp, double u, double y, double sigma, int total)
+{
+    data->clear();
+    u = u/100*total;
+    for(int x = 0; x<total; x++)
+    {
+        double dd = x - u;
+        if(dd > total/2)
+        {
+            dd -= total;
+        }else if(dd<total/(-2))
+        {
+            dd +=total;
+        }
+
+        data->push_back((amp-y)*exp(-0.5*(pow((dd)/(sigma*total/100),2))));
+
+        //        data->push_back((1.0/(sig*(pow (2*PI, 0.5))))*exp(-0.5*(pow((x-u)/(sig),2))));
+    }
+}
+
+void qt_exoskeleton::wave_max(std::vector<double>* data1, std::vector<double>* data2)
+{
+    for(int i = 0; i<data1->size(); i++)
+        if(data1->at(i)<data2->at(i))
+        {
+            data1->at(i) = data2->at(i);
+        }
+}
+
+void qt_exoskeleton::wave_display(parameter_model* pp_model, int total)
+{
+    std::vector<double> time;
+    for(int i = 0; i<total; i++)
+    {
+        time.push_back(double(i));
+
+    }
+    pp_model->curve_left_hip.setSamples(time.data(), pp_model->left_hip_angle.data(), pp_model->left_hip_angle.size());
+    pp_model->curve_left_hip.setPen( Qt::red, 2 );
+    pp_model->curve_left_hip.attach( ui->qwtPlot_motion_model_parameter_walk );
+    ui->qwtPlot_motion_model_parameter_walk->replot();
+
+    pp_model->curve_left_knee.setSamples(time.data(), pp_model->left_knee_angle.data(), pp_model->left_knee_angle.size());
+    pp_model->curve_left_knee.setPen( Qt::darkYellow, 2 );
+    pp_model->curve_left_knee.attach( ui->qwtPlot_motion_model_parameter_walk );
+    ui->qwtPlot_motion_model_parameter_walk->replot();
+
+    pp_model->curve_right_hip.setSamples(time.data(), pp_model->right_hip_angle.data(), pp_model->right_hip_angle.size());
+    pp_model->curve_right_hip.setPen( Qt::blue, 2 );
+    pp_model->curve_right_hip.attach( ui->qwtPlot_motion_model_parameter_walk );
+    ui->qwtPlot_motion_model_parameter_walk->replot();
+
+    pp_model->curve_right_knee.setSamples(time.data(), pp_model->right_knee_angle.data(), pp_model->right_knee_angle.size());
+    pp_model->curve_right_knee.setPen( Qt::darkGreen, 2 );
+    pp_model->curve_right_knee.attach( ui->qwtPlot_motion_model_parameter_walk );
+    ui->qwtPlot_motion_model_parameter_walk->replot();
+}
+
+void qt_exoskeleton::on_pushButton_parameter_IMU_clicked()
+{
+    mpu = new MPU_9150();
+    mpu->open(ui->spinBox->value(), "MPU9150-1.dll");
+    timer_mpu->start();
+    ui->spinBox->setDisabled(true);
+}
+void qt_exoskeleton::updateMpuView()
+{
+
+
+    mpu->getAngle();
+    Roll_angle = mpu->get_roll();
+    Yaw_angle = mpu->get_yaw();
+
+
+
+    Roll_angle_temp = Roll_angle - Roll_angle_init;
+    Yaw_angle_temp = Yaw_angle - Yaw_angle_init;
+
+
+
+    //    if(Roll_angle_temp<0)
+    //        Roll_angle_temp += 360;
+    //    if(Yaw_angle_temp<0)
+    //        Yaw_angle_temp += 360;
+
+    std::cout<<Roll_angle<<", "<<Yaw_angle<<std::endl;
+
+
+    //    ui->Dial_1->setNeedle(new QwtDialSimpleNeedle( QwtDialSimpleNeedle::Arrow ,true , Qt::red ));
+    //    ui->Dial_1->setValue(Roll_angle_temp);
+    //    ui->Dial_2->setNeedle(new QwtDialSimpleNeedle( QwtDialSimpleNeedle::Arrow ,true , Qt::red ));
+    //    ui->Dial_2->setValue(Yaw_angle_temp);
+
+    ui->lcdNumber_mpu_roll->display(Roll_angle_temp);
+    ui->lcdNumber_mpu_yaw->display(Yaw_angle_temp);
+
+
+    QString str_state_mode;
+    if(Roll_angle_temp < -5)
+    {
+        str_state_mode = "sitting";
+    }
+    else if(Roll_angle_temp < 15 && Roll_angle_temp>-5)
+    {
+        str_state_mode = "down";
+    }
+    else if(Roll_angle_temp < 40 && Roll_angle_temp>15)
+    {
+        str_state_mode = "up";
+    }
+    else if(Roll_angle_temp>40)
+    {
+        str_state_mode = "walking";
+    }
+    ui->label_state_mode->setText(str_state_mode);
+
+    QString str_state_right;
+    if(Yaw_angle_temp > 5)
+    {
+        str_state_right = "left";
+    }
+    else if(Yaw_angle_temp < -5)
+    {
+        str_state_right = "right";
+    }
+    else
+    {
+        str_state_right = "central";
+    }
+    ui->label_state_right->setText(str_state_right);
+
+
+
+}
+
+void qt_exoskeleton::on_pushButton_parameter_IMU_init_clicked()
+{
+    Roll_angle_init = Roll_angle;
+    Yaw_angle_init = Yaw_angle;
 }

@@ -16,7 +16,8 @@
 #include <random>
 #include <ctime>
 
-
+#include "mpu_9150.h"
+#include <qwt_dial_needle.h>
 
 namespace Ui {
 class qt_exoskeleton;
@@ -47,10 +48,26 @@ private slots:
     void on_pushButton_record_clicked();
     void on_pushButton_period_clicked();
 
+    void on_pushButton_parameter_model_clicked();
+
+    void on_pushButton_parameter_IMU_clicked();
+
+    void updateMpuView();
+    void on_pushButton_parameter_IMU_init_clicked();
+
 private:
+
+    double Roll_angle = 0, Yaw_angle = 0, Pitch_angle = 0;
+    double Roll_angle_init = 0, Yaw_angle_init = 0, Pitch_angle_init = 0;
+    double Roll_angle_temp = 0, Yaw_angle_temp = 0, Pitch_angle_temp = 0;
+
     Ui::qt_exoskeleton *ui;
     QTimer* timer;
     QTimer* timer_model;
+    QTimer* timer_mpu;
+    MPU_9150 *mpu;
+
+
 
     QFile *file_new_model;
     QString filename;
@@ -76,6 +93,43 @@ private:
     std::vector<double> model_right_knee_angle_std;
 
     QwtPlotCurve curve_left_hip, curve_right_hip, curve_left_knee, curve_right_knee;
+
+
+    //parameter model
+    struct parameter_model
+    {
+
+
+        int hip_sin_amp, hip_sin_x, hip_sin_y;
+
+
+        int knee_sin_amp, knee_sin_x, knee_sin_y;
+        int knee_gaussian_amp, knee_gaussian_x, knee_gaussian_y, knee_gaussian_sigma;
+
+
+        std::vector<double> left_hip_angle, right_hip_angle, left_knee_angle, right_knee_angle,
+        left_knee_angle_gauss, right_knee_angle_gauss;
+        QwtPlotCurve     curve_left_hip,curve_right_hip,curve_left_knee,curve_right_knee;
+
+
+    }walk, stand, sit, up, down;
+
+
+    int state_right = 0; // right = 1; central = 0; left = -1;
+    int state_mode = 0;
+    // stand and sitting = 0;
+    // normal walking = 1
+    // go up = 2
+    // go down = 3
+
+
+    //parameter model--
+
+
+    void gaussian_wave(std::vector<double>* data, double amp, double x, double y, double sigma, int total);
+    void sin_wave(std::vector<double>* , double , double , double , int );
+    void wave_max(std::vector<double>*, std::vector<double>*);
+    void wave_display(parameter_model *pp_model, int total);
     QString dir_path;
 
     static const int data_number = 10000;
