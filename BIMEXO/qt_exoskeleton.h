@@ -55,11 +55,16 @@ private slots:
     void updateMpuView();
     void on_pushButton_parameter_IMU_init_clicked();
 
+    void on_pushButton_loadModel_Stand_sit_clicked();
+
 private:
 
     double Roll_angle = 0, Yaw_angle = 0, Pitch_angle = 0;
     double Roll_angle_init = 0, Yaw_angle_init = 0, Pitch_angle_init = 0;
     double Roll_angle_temp = 0, Yaw_angle_temp = 0, Pitch_angle_temp = 0;
+
+    int FSM_state_number_now = 0;
+    int FSM_state_number_will = 0;
 
     Ui::qt_exoskeleton *ui;
     QTimer* timer;
@@ -93,13 +98,14 @@ private:
     std::vector<double> model_right_knee_angle_std;
 
     QwtPlotCurve curve_left_hip, curve_right_hip, curve_left_knee, curve_right_knee;
-
+    QwtPlotCurve curve_stand_LH, curve_stand_RH, curve_stand_LK, curve_stand_RK;
+    QwtPlotCurve curve_sit_LH, curve_sit_RH, curve_sit_LK, curve_sit_RK;
 
     //parameter model
     struct parameter_model
     {
 
-
+        int phase;
         int hip_sin_amp, hip_sin_x, hip_sin_y;
 
 
@@ -129,7 +135,10 @@ private:
     void gaussian_wave(std::vector<double>* data, double amp, double x, double y, double sigma, int total);
     void sin_wave(std::vector<double>* , double , double , double , int );
     void wave_max(std::vector<double>*, std::vector<double>*);
-    void wave_display(parameter_model *pp_model, int total);
+    void wave_display(parameter_model *pp_model);
+    void model_input(parameter_model *pp_model, int gait_number);
+
+
     QString dir_path;
 
     static const int data_number = 10000;

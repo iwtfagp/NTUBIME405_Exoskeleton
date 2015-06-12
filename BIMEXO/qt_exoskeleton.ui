@@ -21,27 +21,6 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_19">
-    <item row="2" column="2">
-     <widget class="QTextBrowser" name="textBrowser">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>100</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>微軟正黑體</family>
-        <pointsize>14</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_16"/>
-    </item>
     <item row="1" column="2">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="maximumSize">
@@ -62,6 +41,21 @@
        <string>Panel</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_13">
+       <item row="8" column="0">
+        <widget class="QPushButton" name="pushButton_close">
+         <property name="font">
+          <font>
+           <family>微軟正黑體</family>
+           <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Close</string>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="pushButton_enable">
          <property name="font">
@@ -220,21 +214,6 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QPushButton" name="pushButton_close">
-         <property name="font">
-          <font>
-           <family>微軟正黑體</family>
-           <pointsize>14</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Close</string>
-         </property>
-        </widget>
-       </item>
        <item row="11" column="0">
         <widget class="QLineEdit" name="lineEdit">
          <property name="text">
@@ -265,6 +244,27 @@
        </item>
       </layout>
      </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QTextBrowser" name="textBrowser">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>100</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>微軟正黑體</family>
+        <pointsize>14</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_16"/>
     </item>
     <item row="0" column="1" rowspan="3">
      <widget class="QTabWidget" name="tabWidget">
@@ -1256,192 +1256,171 @@
        <attribute name="title">
         <string>參數化模組</string>
        </attribute>
-       <widget class="QPushButton" name="pushButton_parameter_model">
-        <property name="geometry">
-         <rect>
-          <x>9</x>
-          <y>9</y>
-          <width>75</width>
-          <height>32</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>TEST</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>130</x>
-          <y>30</y>
-          <width>85</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>狀態機</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>110</x>
-          <y>230</y>
-          <width>942</width>
-          <height>964</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_17">
-         <item row="1" column="0">
-          <layout class="QGridLayout" name="gridLayout_14">
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="groupBox_3">
-             <property name="title">
-              <string>站立</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_15">
-              <item row="0" column="0">
-               <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_stand"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QGroupBox" name="groupBox_4">
-             <property name="title">
-              <string>坐下</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="0">
-               <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_sit"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0">
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>走路</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_18">
+       <layout class="QGridLayout" name="gridLayout_26">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_25">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_parameter_model">
+            <property name="text">
+             <string>GO</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <layout class="QGridLayout" name="gridLayout_21">
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_state_mode">
+              <property name="text">
+               <string>central</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
-             <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_walk"/>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>狀態機</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>左右狀態</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_state_right">
+              <property name="text">
+               <string>central</string>
+              </property>
+             </widget>
             </item>
            </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLCDNumber" name="lcdNumber_state">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>60</y>
-          <width>181</width>
-          <height>111</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton_parameter_IMU">
-        <property name="geometry">
-         <rect>
-          <x>570</x>
-          <y>10</y>
-          <width>151</width>
-          <height>32</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>IMU_Start</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton_parameter_IMU_init">
-        <property name="geometry">
-         <rect>
-          <x>570</x>
-          <y>40</y>
-          <width>151</width>
-          <height>32</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>IMU_init</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_state_right">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>180</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>central</string>
-        </property>
-       </widget>
-       <widget class="QLCDNumber" name="lcdNumber_mpu_roll">
-        <property name="geometry">
-         <rect>
-          <x>310</x>
-          <y>10</y>
-          <width>181</width>
-          <height>111</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLCDNumber" name="lcdNumber_mpu_yaw">
-        <property name="geometry">
-         <rect>
-          <x>310</x>
-          <y>110</y>
-          <width>181</width>
-          <height>111</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_state_mode">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>140</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>central</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="">
-        <property name="geometry">
-         <rect>
-          <x>580</x>
-          <y>80</y>
-          <width>152</width>
-          <height>32</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_20">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>IMU PORT</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="spinBox">
-           <property name="value">
-            <number>6</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSpinBox" name="spinBox_parameter_mode_speed">
+            <property name="minimum">
+             <number>10</number>
+            </property>
+            <property name="maximum">
+             <number>9999</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="3">
+         <layout class="QGridLayout" name="gridLayout_24">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_22">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="pushButton_parameter_IMU">
+              <property name="text">
+               <string>IMU_Start</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="pushButton_parameter_IMU_init">
+              <property name="text">
+               <string>IMU_init</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <layout class="QGridLayout" name="gridLayout_20">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>IMU PORT</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBox">
+                <property name="value">
+                 <number>6</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1">
+           <layout class="QGridLayout" name="gridLayout_23">
+            <item row="0" column="0">
+             <widget class="QLCDNumber" name="lcdNumber_mpu_roll"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLCDNumber" name="lcdNumber_mpu_yaw"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" colspan="4">
+         <layout class="QGridLayout" name="gridLayout_17">
+          <item row="2" column="0">
+           <layout class="QGridLayout" name="gridLayout_14">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>站立</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_15">
+               <item row="0" column="0">
+                <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_stand"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="title">
+               <string>坐下</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="0" column="0">
+                <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_sit"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0">
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="title">
+             <string>走路</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_18">
+             <item row="0" column="0">
+              <widget class="QwtPlot" name="qwtPlot_motion_model_parameter_walk"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_loadModel_Stand_sit">
+            <property name="text">
+             <string>LOAD model</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLCDNumber" name="lcdNumber_mode_number"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLCDNumber" name="lcdNumber_mode_number_now"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

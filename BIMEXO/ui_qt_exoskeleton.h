@@ -40,10 +40,9 @@ class Ui_qt_exoskeleton
 public:
     QWidget *centralWidget;
     QGridLayout *gridLayout_19;
-    QTextBrowser *textBrowser;
-    QGridLayout *gridLayout_16;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_13;
+    QPushButton *pushButton_close;
     QPushButton *pushButton_enable;
     QPushButton *pushButton_standing;
     QPushButton *pushButton_extension;
@@ -54,9 +53,10 @@ public:
     QPushButton *pushButton_sitting;
     QPushButton *pushButton_flexion;
     QPushButton *pushButton_calibration;
-    QPushButton *pushButton_close;
     QLineEdit *lineEdit;
     QSpacerItem *verticalSpacer;
+    QTextBrowser *textBrowser;
+    QGridLayout *gridLayout_16;
     QTabWidget *tabWidget;
     QWidget *tab;
     QGridLayout *gridLayout_9;
@@ -139,9 +139,25 @@ public:
     QCheckBox *checkBox_continue;
     QCheckBox *checkBox_motor_enable;
     QWidget *tab_3;
+    QGridLayout *gridLayout_26;
+    QGridLayout *gridLayout_25;
     QPushButton *pushButton_parameter_model;
+    QGridLayout *gridLayout_21;
+    QLabel *label_state_mode;
     QLabel *label_3;
-    QWidget *layoutWidget;
+    QLabel *label_5;
+    QLabel *label_state_right;
+    QSpinBox *spinBox_parameter_mode_speed;
+    QGridLayout *gridLayout_24;
+    QGridLayout *gridLayout_22;
+    QPushButton *pushButton_parameter_IMU;
+    QPushButton *pushButton_parameter_IMU_init;
+    QGridLayout *gridLayout_20;
+    QLabel *label_4;
+    QSpinBox *spinBox;
+    QGridLayout *gridLayout_23;
+    QLCDNumber *lcdNumber_mpu_roll;
+    QLCDNumber *lcdNumber_mpu_yaw;
     QGridLayout *gridLayout_17;
     QGridLayout *gridLayout_14;
     QGroupBox *groupBox_3;
@@ -153,17 +169,9 @@ public:
     QGroupBox *groupBox_5;
     QGridLayout *gridLayout_18;
     QwtPlot *qwtPlot_motion_model_parameter_walk;
-    QLCDNumber *lcdNumber_state;
-    QPushButton *pushButton_parameter_IMU;
-    QPushButton *pushButton_parameter_IMU_init;
-    QLabel *label_state_right;
-    QLCDNumber *lcdNumber_mpu_roll;
-    QLCDNumber *lcdNumber_mpu_yaw;
-    QLabel *label_state_mode;
-    QWidget *widget;
-    QGridLayout *gridLayout_20;
-    QLabel *label_4;
-    QSpinBox *spinBox;
+    QPushButton *pushButton_loadModel_Stand_sit;
+    QLCDNumber *lcdNumber_mode_number;
+    QLCDNumber *lcdNumber_mode_number_now;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -180,32 +188,25 @@ public:
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
         gridLayout_19->setObjectName(QStringLiteral("gridLayout_19"));
-        textBrowser = new QTextBrowser(centralWidget);
-        textBrowser->setObjectName(QStringLiteral("textBrowser"));
-        textBrowser->setMaximumSize(QSize(16777215, 100));
+        groupBox_2 = new QGroupBox(centralWidget);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        groupBox_2->setMaximumSize(QSize(300, 16777215));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\273\237\346\255\243\351\273\221\351\253\224"));
         font.setPointSize(14);
         font.setBold(true);
         font.setWeight(75);
-        textBrowser->setFont(font);
-
-        gridLayout_19->addWidget(textBrowser, 2, 2, 1, 1);
-
-        gridLayout_16 = new QGridLayout();
-        gridLayout_16->setSpacing(6);
-        gridLayout_16->setObjectName(QStringLiteral("gridLayout_16"));
-
-        gridLayout_19->addLayout(gridLayout_16, 0, 0, 1, 1);
-
-        groupBox_2 = new QGroupBox(centralWidget);
-        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setMaximumSize(QSize(300, 16777215));
         groupBox_2->setFont(font);
         gridLayout_13 = new QGridLayout(groupBox_2);
         gridLayout_13->setSpacing(6);
         gridLayout_13->setContentsMargins(11, 11, 11, 11);
         gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
+        pushButton_close = new QPushButton(groupBox_2);
+        pushButton_close->setObjectName(QStringLiteral("pushButton_close"));
+        pushButton_close->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_close, 8, 0, 1, 1);
+
         pushButton_enable = new QPushButton(groupBox_2);
         pushButton_enable->setObjectName(QStringLiteral("pushButton_enable"));
         pushButton_enable->setFont(font);
@@ -272,12 +273,6 @@ public:
 
         gridLayout_13->addWidget(pushButton_calibration, 3, 0, 1, 1);
 
-        pushButton_close = new QPushButton(groupBox_2);
-        pushButton_close->setObjectName(QStringLiteral("pushButton_close"));
-        pushButton_close->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_close, 8, 0, 1, 1);
-
         lineEdit = new QLineEdit(groupBox_2);
         lineEdit->setObjectName(QStringLiteral("lineEdit"));
 
@@ -289,6 +284,19 @@ public:
 
 
         gridLayout_19->addWidget(groupBox_2, 1, 2, 1, 1);
+
+        textBrowser = new QTextBrowser(centralWidget);
+        textBrowser->setObjectName(QStringLiteral("textBrowser"));
+        textBrowser->setMaximumSize(QSize(16777215, 100));
+        textBrowser->setFont(font);
+
+        gridLayout_19->addWidget(textBrowser, 2, 2, 1, 1);
+
+        gridLayout_16 = new QGridLayout();
+        gridLayout_16->setSpacing(6);
+        gridLayout_16->setObjectName(QStringLiteral("gridLayout_16"));
+
+        gridLayout_19->addLayout(gridLayout_16, 0, 0, 1, 1);
 
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
@@ -763,24 +771,117 @@ public:
         tabWidget->addTab(tab_5, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QStringLiteral("tab_3"));
+        gridLayout_26 = new QGridLayout(tab_3);
+        gridLayout_26->setSpacing(6);
+        gridLayout_26->setContentsMargins(11, 11, 11, 11);
+        gridLayout_26->setObjectName(QStringLiteral("gridLayout_26"));
+        gridLayout_25 = new QGridLayout();
+        gridLayout_25->setSpacing(6);
+        gridLayout_25->setObjectName(QStringLiteral("gridLayout_25"));
         pushButton_parameter_model = new QPushButton(tab_3);
         pushButton_parameter_model->setObjectName(QStringLiteral("pushButton_parameter_model"));
-        pushButton_parameter_model->setGeometry(QRect(9, 9, 75, 32));
+
+        gridLayout_25->addWidget(pushButton_parameter_model, 0, 0, 1, 1);
+
+        gridLayout_21 = new QGridLayout();
+        gridLayout_21->setSpacing(6);
+        gridLayout_21->setObjectName(QStringLiteral("gridLayout_21"));
+        label_state_mode = new QLabel(tab_3);
+        label_state_mode->setObjectName(QStringLiteral("label_state_mode"));
+
+        gridLayout_21->addWidget(label_state_mode, 0, 2, 1, 1);
+
         label_3 = new QLabel(tab_3);
         label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setGeometry(QRect(130, 30, 85, 24));
-        layoutWidget = new QWidget(tab_3);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(110, 230, 942, 964));
-        gridLayout_17 = new QGridLayout(layoutWidget);
+
+        gridLayout_21->addWidget(label_3, 0, 0, 1, 1);
+
+        label_5 = new QLabel(tab_3);
+        label_5->setObjectName(QStringLiteral("label_5"));
+
+        gridLayout_21->addWidget(label_5, 1, 0, 1, 1);
+
+        label_state_right = new QLabel(tab_3);
+        label_state_right->setObjectName(QStringLiteral("label_state_right"));
+
+        gridLayout_21->addWidget(label_state_right, 1, 2, 1, 1);
+
+
+        gridLayout_25->addLayout(gridLayout_21, 2, 0, 1, 1);
+
+        spinBox_parameter_mode_speed = new QSpinBox(tab_3);
+        spinBox_parameter_mode_speed->setObjectName(QStringLiteral("spinBox_parameter_mode_speed"));
+        spinBox_parameter_mode_speed->setMinimum(10);
+        spinBox_parameter_mode_speed->setMaximum(9999);
+        spinBox_parameter_mode_speed->setValue(100);
+
+        gridLayout_25->addWidget(spinBox_parameter_mode_speed, 1, 0, 1, 1);
+
+
+        gridLayout_26->addLayout(gridLayout_25, 0, 0, 1, 1);
+
+        gridLayout_24 = new QGridLayout();
+        gridLayout_24->setSpacing(6);
+        gridLayout_24->setObjectName(QStringLiteral("gridLayout_24"));
+        gridLayout_22 = new QGridLayout();
+        gridLayout_22->setSpacing(6);
+        gridLayout_22->setObjectName(QStringLiteral("gridLayout_22"));
+        pushButton_parameter_IMU = new QPushButton(tab_3);
+        pushButton_parameter_IMU->setObjectName(QStringLiteral("pushButton_parameter_IMU"));
+
+        gridLayout_22->addWidget(pushButton_parameter_IMU, 0, 0, 1, 1);
+
+        pushButton_parameter_IMU_init = new QPushButton(tab_3);
+        pushButton_parameter_IMU_init->setObjectName(QStringLiteral("pushButton_parameter_IMU_init"));
+
+        gridLayout_22->addWidget(pushButton_parameter_IMU_init, 1, 0, 1, 1);
+
+        gridLayout_20 = new QGridLayout();
+        gridLayout_20->setSpacing(6);
+        gridLayout_20->setObjectName(QStringLiteral("gridLayout_20"));
+        label_4 = new QLabel(tab_3);
+        label_4->setObjectName(QStringLiteral("label_4"));
+
+        gridLayout_20->addWidget(label_4, 0, 0, 1, 1);
+
+        spinBox = new QSpinBox(tab_3);
+        spinBox->setObjectName(QStringLiteral("spinBox"));
+        spinBox->setValue(6);
+
+        gridLayout_20->addWidget(spinBox, 0, 1, 1, 1);
+
+
+        gridLayout_22->addLayout(gridLayout_20, 2, 0, 1, 1);
+
+
+        gridLayout_24->addLayout(gridLayout_22, 0, 0, 1, 1);
+
+        gridLayout_23 = new QGridLayout();
+        gridLayout_23->setSpacing(6);
+        gridLayout_23->setObjectName(QStringLiteral("gridLayout_23"));
+        lcdNumber_mpu_roll = new QLCDNumber(tab_3);
+        lcdNumber_mpu_roll->setObjectName(QStringLiteral("lcdNumber_mpu_roll"));
+
+        gridLayout_23->addWidget(lcdNumber_mpu_roll, 0, 0, 1, 1);
+
+        lcdNumber_mpu_yaw = new QLCDNumber(tab_3);
+        lcdNumber_mpu_yaw->setObjectName(QStringLiteral("lcdNumber_mpu_yaw"));
+
+        gridLayout_23->addWidget(lcdNumber_mpu_yaw, 1, 0, 1, 1);
+
+
+        gridLayout_24->addLayout(gridLayout_23, 0, 1, 1, 1);
+
+
+        gridLayout_26->addLayout(gridLayout_24, 0, 3, 1, 1);
+
+        gridLayout_17 = new QGridLayout();
         gridLayout_17->setSpacing(6);
-        gridLayout_17->setContentsMargins(11, 11, 11, 11);
         gridLayout_17->setObjectName(QStringLiteral("gridLayout_17"));
-        gridLayout_17->setContentsMargins(0, 0, 0, 0);
         gridLayout_14 = new QGridLayout();
         gridLayout_14->setSpacing(6);
         gridLayout_14->setObjectName(QStringLiteral("gridLayout_14"));
-        groupBox_3 = new QGroupBox(layoutWidget);
+        groupBox_3 = new QGroupBox(tab_3);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         gridLayout_15 = new QGridLayout(groupBox_3);
         gridLayout_15->setSpacing(6);
@@ -794,7 +895,7 @@ public:
 
         gridLayout_14->addWidget(groupBox_3, 0, 0, 1, 1);
 
-        groupBox_4 = new QGroupBox(layoutWidget);
+        groupBox_4 = new QGroupBox(tab_3);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
         gridLayout_2 = new QGridLayout(groupBox_4);
         gridLayout_2->setSpacing(6);
@@ -809,9 +910,9 @@ public:
         gridLayout_14->addWidget(groupBox_4, 0, 1, 1, 1);
 
 
-        gridLayout_17->addLayout(gridLayout_14, 1, 0, 1, 1);
+        gridLayout_17->addLayout(gridLayout_14, 2, 0, 1, 1);
 
-        groupBox_5 = new QGroupBox(layoutWidget);
+        groupBox_5 = new QGroupBox(tab_3);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
         gridLayout_18 = new QGridLayout(groupBox_5);
         gridLayout_18->setSpacing(6);
@@ -825,45 +926,23 @@ public:
 
         gridLayout_17->addWidget(groupBox_5, 0, 0, 1, 1);
 
-        lcdNumber_state = new QLCDNumber(tab_3);
-        lcdNumber_state->setObjectName(QStringLiteral("lcdNumber_state"));
-        lcdNumber_state->setGeometry(QRect(40, 60, 181, 111));
-        pushButton_parameter_IMU = new QPushButton(tab_3);
-        pushButton_parameter_IMU->setObjectName(QStringLiteral("pushButton_parameter_IMU"));
-        pushButton_parameter_IMU->setGeometry(QRect(570, 10, 151, 32));
-        pushButton_parameter_IMU_init = new QPushButton(tab_3);
-        pushButton_parameter_IMU_init->setObjectName(QStringLiteral("pushButton_parameter_IMU_init"));
-        pushButton_parameter_IMU_init->setGeometry(QRect(570, 40, 151, 32));
-        label_state_right = new QLabel(tab_3);
-        label_state_right->setObjectName(QStringLiteral("label_state_right"));
-        label_state_right->setGeometry(QRect(160, 180, 111, 31));
-        lcdNumber_mpu_roll = new QLCDNumber(tab_3);
-        lcdNumber_mpu_roll->setObjectName(QStringLiteral("lcdNumber_mpu_roll"));
-        lcdNumber_mpu_roll->setGeometry(QRect(310, 10, 181, 111));
-        lcdNumber_mpu_yaw = new QLCDNumber(tab_3);
-        lcdNumber_mpu_yaw->setObjectName(QStringLiteral("lcdNumber_mpu_yaw"));
-        lcdNumber_mpu_yaw->setGeometry(QRect(310, 110, 181, 111));
-        label_state_mode = new QLabel(tab_3);
-        label_state_mode->setObjectName(QStringLiteral("label_state_mode"));
-        label_state_mode->setGeometry(QRect(210, 140, 111, 31));
-        widget = new QWidget(tab_3);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(580, 80, 152, 32));
-        gridLayout_20 = new QGridLayout(widget);
-        gridLayout_20->setSpacing(6);
-        gridLayout_20->setContentsMargins(11, 11, 11, 11);
-        gridLayout_20->setObjectName(QStringLiteral("gridLayout_20"));
-        gridLayout_20->setContentsMargins(0, 0, 0, 0);
-        label_4 = new QLabel(widget);
-        label_4->setObjectName(QStringLiteral("label_4"));
+        pushButton_loadModel_Stand_sit = new QPushButton(tab_3);
+        pushButton_loadModel_Stand_sit->setObjectName(QStringLiteral("pushButton_loadModel_Stand_sit"));
 
-        gridLayout_20->addWidget(label_4, 0, 0, 1, 1);
+        gridLayout_17->addWidget(pushButton_loadModel_Stand_sit, 1, 0, 1, 1);
 
-        spinBox = new QSpinBox(widget);
-        spinBox->setObjectName(QStringLiteral("spinBox"));
-        spinBox->setValue(6);
 
-        gridLayout_20->addWidget(spinBox, 0, 1, 1, 1);
+        gridLayout_26->addLayout(gridLayout_17, 1, 0, 1, 4);
+
+        lcdNumber_mode_number = new QLCDNumber(tab_3);
+        lcdNumber_mode_number->setObjectName(QStringLiteral("lcdNumber_mode_number"));
+
+        gridLayout_26->addWidget(lcdNumber_mode_number, 0, 2, 1, 1);
+
+        lcdNumber_mode_number_now = new QLCDNumber(tab_3);
+        lcdNumber_mode_number_now->setObjectName(QStringLiteral("lcdNumber_mode_number_now"));
+
+        gridLayout_26->addWidget(lcdNumber_mode_number_now, 0, 1, 1, 1);
 
         tabWidget->addTab(tab_3, QString());
 
@@ -893,6 +972,7 @@ public:
     {
         qt_exoskeleton->setWindowTitle(QApplication::translate("qt_exoskeleton", "qt_exoskeleton", 0));
         groupBox_2->setTitle(QApplication::translate("qt_exoskeleton", "Panel", 0));
+        pushButton_close->setText(QApplication::translate("qt_exoskeleton", "Close", 0));
         pushButton_enable->setText(QApplication::translate("qt_exoskeleton", "Enable", 0));
         pushButton_standing->setText(QApplication::translate("qt_exoskeleton", "Standing", 0));
         pushButton_extension->setText(QApplication::translate("qt_exoskeleton", "Extension Limit", 0));
@@ -903,7 +983,6 @@ public:
         pushButton_sitting->setText(QApplication::translate("qt_exoskeleton", "Sitting", 0));
         pushButton_flexion->setText(QApplication::translate("qt_exoskeleton", "Flexion Limit", 0));
         pushButton_calibration->setText(QApplication::translate("qt_exoskeleton", "Calibration", 0));
-        pushButton_close->setText(QApplication::translate("qt_exoskeleton", "Close", 0));
         lineEdit->setText(QApplication::translate("qt_exoskeleton", "PRESS", 0));
         groupBox_left_hip->setTitle(QApplication::translate("qt_exoskeleton", "\345\267\246\351\253\226\351\227\234\347\257\200", 0));
         lineEdit_left_hip_flexion->setText(QApplication::translate("qt_exoskeleton", "120", 0));
@@ -955,16 +1034,18 @@ public:
         checkBox_continue->setText(QApplication::translate("qt_exoskeleton", "Continue Mode", 0));
         checkBox_motor_enable->setText(QApplication::translate("qt_exoskeleton", "Enable the motor", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_5), QApplication::translate("qt_exoskeleton", "\350\265\260\350\267\257", 0));
-        pushButton_parameter_model->setText(QApplication::translate("qt_exoskeleton", "TEST", 0));
+        pushButton_parameter_model->setText(QApplication::translate("qt_exoskeleton", "GO", 0));
+        label_state_mode->setText(QApplication::translate("qt_exoskeleton", "central", 0));
         label_3->setText(QApplication::translate("qt_exoskeleton", "\347\213\200\346\205\213\346\251\237", 0));
+        label_5->setText(QApplication::translate("qt_exoskeleton", "\345\267\246\345\217\263\347\213\200\346\205\213", 0));
+        label_state_right->setText(QApplication::translate("qt_exoskeleton", "central", 0));
+        pushButton_parameter_IMU->setText(QApplication::translate("qt_exoskeleton", "IMU_Start", 0));
+        pushButton_parameter_IMU_init->setText(QApplication::translate("qt_exoskeleton", "IMU_init", 0));
+        label_4->setText(QApplication::translate("qt_exoskeleton", "IMU PORT", 0));
         groupBox_3->setTitle(QApplication::translate("qt_exoskeleton", "\347\253\231\347\253\213", 0));
         groupBox_4->setTitle(QApplication::translate("qt_exoskeleton", "\345\235\220\344\270\213", 0));
         groupBox_5->setTitle(QApplication::translate("qt_exoskeleton", "\350\265\260\350\267\257", 0));
-        pushButton_parameter_IMU->setText(QApplication::translate("qt_exoskeleton", "IMU_Start", 0));
-        pushButton_parameter_IMU_init->setText(QApplication::translate("qt_exoskeleton", "IMU_init", 0));
-        label_state_right->setText(QApplication::translate("qt_exoskeleton", "central", 0));
-        label_state_mode->setText(QApplication::translate("qt_exoskeleton", "central", 0));
-        label_4->setText(QApplication::translate("qt_exoskeleton", "IMU PORT", 0));
+        pushButton_loadModel_Stand_sit->setText(QApplication::translate("qt_exoskeleton", "LOAD model", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("qt_exoskeleton", "\345\217\203\346\225\270\345\214\226\346\250\241\347\265\204", 0));
     } // retranslateUi
 

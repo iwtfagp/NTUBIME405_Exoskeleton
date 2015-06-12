@@ -43,33 +43,58 @@ qt_exoskeleton::qt_exoskeleton(QWidget *parent) :
     //parameter mode++
 
 
-    //    ui->qwtPlot_motion_model_parameter_sit->setTitle( "Sit" );
+
     ui->qwtPlot_motion_model_parameter_sit->setCanvasBackground( Qt::white );
-    //    ui->qwtPlot_motion_model_parameter_sit->setAxisScale( QwtPlot::yLeft, 0.0, 10.0 );
-    ui->qwtPlot_motion_model_parameter_sit->insertLegend( new QwtLegend() );
-    //    sit.curve_left_hip.setTitle("Left Hip");
-    //    sit.curve_right_hip.setTitle("Right Hip");
-    //    sit.curve_left_knee.setTitle("Left Knee");
-    //    sit.curve_right_knee.setTitle("Right Knee");
 
-    //    ui->qwtPlot_motion_model_parameter_stand->setTitle( "Down" );
+
     ui->qwtPlot_motion_model_parameter_stand->setCanvasBackground( Qt::white );
-    //    ui->qwtPlot_motion_model_parameter_stand->setAxisScale( QwtPlot::yLeft, 0.0, 100.0 );
-    ui->qwtPlot_motion_model_parameter_stand->insertLegend( new QwtLegend() );
-    //    stand.curve_left_hip.setTitle("Left Hip");
-    //    stand.curve_right_hip.setTitle("Right Hip");
-    //    stand.curve_left_knee.setTitle("Left Knee");
-    //    stand.curve_right_knee.setTitle("Right Knee");
 
-    //    ui->qwtPlot_motion_model_parameter_walk->setTitle( "Down" );
+
+
     ui->qwtPlot_motion_model_parameter_walk->setCanvasBackground( Qt::white );
-    //    ui->qwtPlot_motion_model_parameter_walk->setAxisScale( QwtPlot::yLeft, 0.0, 10.0 );
+
     ui->qwtPlot_motion_model_parameter_walk->insertLegend( new QwtLegend() );
-    //    walk.curve_left_hip.setTitle("Left Hip");
-    //    walk.curve_right_hip.setTitle("Right Hip");
-    //    walk.curve_left_knee.setTitle("Left Knee");
-    //    walk.curve_right_knee.setTitle("Right Knee");
+    walk.curve_left_hip.setTitle("Left Hip");
+    walk.curve_right_hip.setTitle("Right Hip");
+    walk.curve_left_knee.setTitle("Left Knee");
+    walk.curve_right_knee.setTitle("Right Knee");
     //parameter mode--
+
+    //set mode parameter
+    walk.phase = 50;
+    walk.hip_sin_x = 0;
+    walk.hip_sin_y = 10;
+    walk.hip_sin_amp = 30;
+    walk.knee_sin_x = 80;
+    walk.knee_sin_y = 10;
+    walk.knee_sin_amp = 65;
+    walk.knee_gaussian_x = 20;
+    walk.knee_gaussian_y = 0;
+    walk.knee_gaussian_amp = 10;
+    walk.knee_gaussian_sigma = 20;
+
+    up.hip_sin_x = 0;
+    up.hip_sin_y = 30;
+    up.hip_sin_amp = 50;
+    up.knee_sin_x = 80;
+    up.knee_sin_y = 50;
+    up.knee_sin_amp = 75;
+    up.knee_gaussian_x = 20;
+    up.knee_gaussian_y = 0;
+    up.knee_gaussian_amp = 10;
+    up.knee_gaussian_sigma = 20;
+
+    down.hip_sin_x = 0;
+    down.hip_sin_y = 20;
+    down.hip_sin_amp = 30;
+    down.knee_sin_x = 80;
+    down.knee_sin_y = 30;
+    down.knee_sin_amp = 75;
+    down.knee_gaussian_x = 70;
+    down.knee_gaussian_y = 20;
+    down.knee_gaussian_amp = 53;
+    down.knee_gaussian_sigma = 20;
+
 
 
     //Set Timer
@@ -328,13 +353,13 @@ void qt_exoskeleton::keyPressEvent(QKeyEvent* event)
     //    if(ui->pushButton_StartModel->isEnabled()){
     if(event->key() == Qt::Key_Down)
     {
-        ui->textBrowser->append("Feel Bad");
-        this->on_pushButton_record_clicked();
+        ui->textBrowser->append("check");
+        //        this->on_pushButton_record_clicked();
     }
     if(event->key() == Qt::Key_Up)
     {
-        ui->textBrowser->append("Period");
-        this->on_pushButton_period_clicked();
+        ui->textBrowser->append("go");
+        this->on_pushButton_parameter_model_clicked();
     }
     //    }
 }
@@ -572,7 +597,6 @@ void qt_exoskeleton::updateModel()
     ui->textBrowser->append(QString::number(step) + "\t = " + QString::number(check));
     ML_lable[step] = check;
 
-
     QString str_ErrorCode;
     //enable the motor
     //限制動作部分
@@ -664,74 +688,116 @@ void qt_exoskeleton::updateModel()
         }
         this->on_pushButton_loadModel_clicked();
     }
-
     //    count += 5000;
 }
 
 void qt_exoskeleton::on_pushButton_parameter_model_clicked()
 {
+    QString str_ErrorCode;
+    static int step = 0;
+    if(step < 10000){
+        timer_mpu->stop();
+    }
+    else if(step >= 10000){
+        timer_mpu->start();
+        step = 0;
+    }
+    ui->textBrowser->append("step = " + QString::number(step));
 
-    const int gait_number = 1000;
 
 
+    double left_hip_angle, right_hip_angle, left_knee_angle, right_knee_angle;
 
-    //walking
-    const int phase = 50;
-    walk.hip_sin_x = 0;
-    walk.hip_sin_y = 10;
-    walk.hip_sin_amp = 30;
 
-    walk.knee_sin_x = 80;
-    walk.knee_sin_y = 10;
-    walk.knee_sin_amp = 65;
-    walk.knee_gaussian_x = 20;
-    walk.knee_gaussian_y = 0;
-    walk.knee_gaussian_amp = 10;
-    walk.knee_gaussian_sigma = 20;
+    switch(FSM_state_number_will)
+    {
+    case 1:
+        left_hip_angle  = sit.left_hip_angle  .at(step);
+        right_hip_angle = sit.right_hip_angle .at(step);
+        left_knee_angle = sit.left_knee_angle .at(step);
+        right_knee_angle= sit.right_knee_angle.at(step);
+        break;
+    case 2:
+        left_hip_angle  = walk.left_hip_angle  .at(step);
+        right_hip_angle = walk.right_hip_angle .at(step);
+        left_knee_angle = walk.left_knee_angle .at(step);
+        right_knee_angle= walk.right_knee_angle.at(step);
+        break;
+    case 3:
+        left_hip_angle  = up.left_hip_angle  .at(step);
+        right_hip_angle = up.right_hip_angle .at(step);
+        left_knee_angle = up.left_knee_angle .at(step);
+        right_knee_angle= up.right_knee_angle.at(step);
+        break;
+    case 4:
+        left_hip_angle  = down.left_hip_angle  .at(step);
+        right_hip_angle = down.right_hip_angle .at(step);
+        left_knee_angle = down.left_knee_angle .at(step);
+        right_knee_angle= down.right_knee_angle.at(step);
+        break;
+    }
 
-    sin_wave(&walk.left_hip_angle,
-             walk.hip_sin_amp,
-             walk.hip_sin_x,
-             walk.hip_sin_y,
-             gait_number);
 
-    sin_wave(&walk.left_knee_angle,
-             walk.knee_sin_amp,
-             walk.knee_sin_x,
-             walk.knee_sin_y,
-             gait_number);
+    if(motor_left_hip->getEnableState(&str_ErrorCode)){
+        double target_position;
+        if(left_hip_angle > left_hip_flexion_limit-5){
+            target_position = left_hip_flexion_limit-5;
+        }else if(left_hip_angle < left_hip_extension_limit+5){
+            target_position = left_hip_extension_limit+5;
+        }else{
+            target_position = left_hip_angle;
+        }
+        target_position *= -1.0; //if this is left
+        ui->textBrowser->append("left_hip = " + QString::number(left_hip_angle));
+        motor_left_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+    else{
+        ui->textBrowser->append("motor_left_hip FAIL!!!!!");}
 
-    gaussian_wave(&walk.left_knee_angle_gauss,
-                  walk.knee_gaussian_amp,
-                  walk.knee_gaussian_x,
-                  walk.knee_gaussian_y,
-                  walk.knee_gaussian_sigma,
-                  gait_number);
+    if(motor_right_hip->getEnableState(&str_ErrorCode)){
+        double target_position;
+        if(right_hip_angle > right_hip_flexion_limit-5){
+            target_position = right_hip_flexion_limit-5;
+        }else if(right_hip_angle < right_hip_extension_limit+5){
+            target_position = right_hip_extension_limit+5;
+        }else{
+            target_position = right_hip_angle;
+        }
+        ui->textBrowser->append("right_hip = " + QString::number(right_hip_angle));
+        motor_right_hip->MoveToPosition(target_position, true, &str_ErrorCode);}
+    else{
+        ui->textBrowser->append("motor_right_hip FAIL!!!!!");}
 
-    wave_max(&walk.left_knee_angle, &walk.left_knee_angle_gauss);
+    if(motor_left_knee->getEnableState(&str_ErrorCode)){
+        double target_position;
+        if(left_knee_angle > left_knee_flexion_limit-5){
+            target_position = left_knee_flexion_limit-5;
+        }else if(left_knee_angle < left_knee_extension_limit+5){
+            target_position = left_knee_extension_limit+5;
+        }else{
+            target_position = left_knee_angle;
+        }
+        target_position *= -1.0; //if this is left
+        ui->textBrowser->append("left_knee = " + QString::number(left_knee_angle));
+        motor_left_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+    else{
+        ui->textBrowser->append("motor_left_knee FAIL!!!!!");}
 
-    sin_wave(&walk.right_hip_angle,
-             walk.hip_sin_amp,
-             walk.hip_sin_x+phase,
-             walk.hip_sin_y,
-             gait_number);
+    if(motor_right_knee->getEnableState(&str_ErrorCode)){
+        double target_position;
+        if(right_knee_angle > right_knee_flexion_limit-5){
+            target_position = right_knee_flexion_limit-5;
+        }else if(right_knee_angle < right_knee_extension_limit+5){
+            target_position = right_knee_extension_limit+5;
+        }else{
+            target_position = right_knee_angle;
+        }
+        ui->textBrowser->append("right_knee = " + QString::number(right_knee_angle));
+        motor_right_knee->MoveToPosition(target_position, true, &str_ErrorCode);}
+    else{
+        ui->textBrowser->append("motor_right_knee FAIL!!!!!");}
 
-    sin_wave(&walk.right_knee_angle,
-             walk.knee_sin_amp,
-             walk.knee_sin_x+phase,
-             walk.knee_sin_y,
-             gait_number);
+    step += ui->spinBox_parameter_mode_speed->text().toInt();
 
-    gaussian_wave(&walk.right_knee_angle_gauss,
-                  walk.knee_gaussian_amp,
-                  walk.knee_gaussian_x+phase,
-                  walk.knee_gaussian_y,
-                  walk.knee_gaussian_sigma,
-                  gait_number);
-
-    wave_max(&walk.right_knee_angle, &walk.right_knee_angle_gauss);
-
-    wave_display(&walk, gait_number);
 
 
 
@@ -776,32 +842,31 @@ void qt_exoskeleton::wave_max(std::vector<double>* data1, std::vector<double>* d
         }
 }
 
-void qt_exoskeleton::wave_display(parameter_model* pp_model, int total)
+void qt_exoskeleton::wave_display(parameter_model* pp_model)
 {
+    //    ui->qwtPlot_motion_model_parameter_walk->
     std::vector<double> time;
-    for(int i = 0; i<total; i++)
+    for(int i = 0; i<pp_model->left_hip_angle.size(); i++)
     {
         time.push_back(double(i));
-
     }
+
     pp_model->curve_left_hip.setSamples(time.data(), pp_model->left_hip_angle.data(), pp_model->left_hip_angle.size());
     pp_model->curve_left_hip.setPen( Qt::red, 2 );
     pp_model->curve_left_hip.attach( ui->qwtPlot_motion_model_parameter_walk );
-    ui->qwtPlot_motion_model_parameter_walk->replot();
 
     pp_model->curve_left_knee.setSamples(time.data(), pp_model->left_knee_angle.data(), pp_model->left_knee_angle.size());
     pp_model->curve_left_knee.setPen( Qt::darkYellow, 2 );
     pp_model->curve_left_knee.attach( ui->qwtPlot_motion_model_parameter_walk );
-    ui->qwtPlot_motion_model_parameter_walk->replot();
 
     pp_model->curve_right_hip.setSamples(time.data(), pp_model->right_hip_angle.data(), pp_model->right_hip_angle.size());
     pp_model->curve_right_hip.setPen( Qt::blue, 2 );
     pp_model->curve_right_hip.attach( ui->qwtPlot_motion_model_parameter_walk );
-    ui->qwtPlot_motion_model_parameter_walk->replot();
 
     pp_model->curve_right_knee.setSamples(time.data(), pp_model->right_knee_angle.data(), pp_model->right_knee_angle.size());
     pp_model->curve_right_knee.setPen( Qt::darkGreen, 2 );
     pp_model->curve_right_knee.attach( ui->qwtPlot_motion_model_parameter_walk );
+
     ui->qwtPlot_motion_model_parameter_walk->replot();
 }
 
@@ -815,62 +880,28 @@ void qt_exoskeleton::on_pushButton_parameter_IMU_clicked()
 void qt_exoskeleton::updateMpuView()
 {
 
-
     mpu->getAngle();
     Roll_angle = mpu->get_roll();
     Yaw_angle = mpu->get_yaw();
 
-
-
     Roll_angle_temp = Roll_angle - Roll_angle_init;
     Yaw_angle_temp = Yaw_angle - Yaw_angle_init;
 
-
-
-    //    if(Roll_angle_temp<0)
-    //        Roll_angle_temp += 360;
-    //    if(Yaw_angle_temp<0)
-    //        Yaw_angle_temp += 360;
-
     std::cout<<Roll_angle<<", "<<Yaw_angle<<std::endl;
-
-
-    //    ui->Dial_1->setNeedle(new QwtDialSimpleNeedle( QwtDialSimpleNeedle::Arrow ,true , Qt::red ));
-    //    ui->Dial_1->setValue(Roll_angle_temp);
-    //    ui->Dial_2->setNeedle(new QwtDialSimpleNeedle( QwtDialSimpleNeedle::Arrow ,true , Qt::red ));
-    //    ui->Dial_2->setValue(Yaw_angle_temp);
 
     ui->lcdNumber_mpu_roll->display(Roll_angle_temp);
     ui->lcdNumber_mpu_yaw->display(Yaw_angle_temp);
-
-
-    QString str_state_mode;
-    if(Roll_angle_temp < -5)
-    {
-        str_state_mode = "sitting";
-    }
-    else if(Roll_angle_temp < 15 && Roll_angle_temp>-5)
-    {
-        str_state_mode = "down";
-    }
-    else if(Roll_angle_temp < 40 && Roll_angle_temp>15)
-    {
-        str_state_mode = "up";
-    }
-    else if(Roll_angle_temp>40)
-    {
-        str_state_mode = "walking";
-    }
-    ui->label_state_mode->setText(str_state_mode);
 
     QString str_state_right;
     if(Yaw_angle_temp > 5)
     {
         str_state_right = "left";
+        walk.phase = 50;
     }
     else if(Yaw_angle_temp < -5)
     {
         str_state_right = "right";
+        walk.phase = 0;
     }
     else
     {
@@ -878,12 +909,200 @@ void qt_exoskeleton::updateMpuView()
     }
     ui->label_state_right->setText(str_state_right);
 
+    QString str_state_mode;
+    if(Roll_angle_temp < -5)
+    {
+        str_state_mode = "sitting";
+        FSM_state_number_will = 1;
+    }
+    else if(Roll_angle_temp < 15 && Roll_angle_temp>-5)
+    {
+        str_state_mode = "down";
+        FSM_state_number_will = 4;
+        model_input(&down, 10000);
+        //        wave_display(&down);
 
+    }
+    else if(Roll_angle_temp < 40 && Roll_angle_temp>15)
+    {
+        str_state_mode = "up";
+        FSM_state_number_will = 3;
+        model_input(&up, 10000);
+        up.hip_sin_amp = 50 + Roll_angle_temp;
+        up.knee_sin_amp = 75 + Roll_angle_temp;
+        wave_display(&up);
 
+    }
+    else if(Roll_angle_temp>40)
+    {
+        str_state_mode = "walk";
+        FSM_state_number_will = 2;
+        walk.hip_sin_amp = 30 + Roll_angle_temp;
+        walk.knee_sin_amp = 65 + Roll_angle_temp;
+        model_input(&walk, 10000);
+        //        wave_display(&walk);
+    }
+    ui->label_state_mode->setText(str_state_mode);
+    ui->lcdNumber_mode_number->display(FSM_state_number_will);
+    //-------------------------------------------------------------
 }
 
 void qt_exoskeleton::on_pushButton_parameter_IMU_init_clicked()
 {
     Roll_angle_init = Roll_angle;
     Yaw_angle_init = Yaw_angle;
+}
+
+void qt_exoskeleton::model_input(parameter_model *pp_model, int gait_number)
+{
+    //walking
+    parameter_model temp;
+
+    sin_wave(&pp_model->left_hip_angle,
+             pp_model->hip_sin_amp,
+             pp_model->hip_sin_x + pp_model->phase,
+             pp_model->hip_sin_y,
+             gait_number);
+
+    sin_wave(&pp_model->left_knee_angle,
+             pp_model->knee_sin_amp,
+             pp_model->knee_sin_x + pp_model->phase,
+             pp_model->knee_sin_y,
+             gait_number);
+
+    gaussian_wave(&pp_model->left_knee_angle_gauss,
+                  pp_model->knee_gaussian_amp,
+                  pp_model->knee_gaussian_x + pp_model->phase,
+                  pp_model->knee_gaussian_y,
+                  pp_model->knee_gaussian_sigma,
+                  gait_number);
+
+    wave_max(&pp_model->left_knee_angle, &pp_model->left_knee_angle_gauss);
+
+    sin_wave(&pp_model->right_hip_angle,
+             pp_model->hip_sin_amp,
+             pp_model->hip_sin_x + pp_model->phase + 50,
+             pp_model->hip_sin_y,
+             gait_number);
+
+    sin_wave(&pp_model->right_knee_angle,
+             pp_model->knee_sin_amp,
+             pp_model->knee_sin_x + pp_model->phase + 50,
+             pp_model->knee_sin_y,
+             gait_number);
+
+    gaussian_wave(&pp_model->right_knee_angle_gauss,
+                  pp_model->knee_gaussian_amp,
+                  pp_model->knee_gaussian_x + pp_model->phase + 50,
+                  pp_model->knee_gaussian_y,
+                  pp_model->knee_gaussian_sigma,
+                  gait_number);
+    wave_max(&pp_model->right_knee_angle, &pp_model->right_knee_angle_gauss);
+
+
+}
+void qt_exoskeleton::on_pushButton_loadModel_Stand_sit_clicked()
+{
+
+    //    filename = QFileDialog::getOpenFileName(this, tr("Open File"),"/",tr("Model (*.model)"));
+    QString filename_sitting = "William_sitting.model";
+    QString filename_standing = "William_stand.model";
+
+
+    if(filename_sitting.isEmpty())
+    {
+        ui->textBrowser->append("No filename_sitting");
+        return;
+    }
+    ui->textBrowser->append("filename_sitting");
+    if(filename_standing.isEmpty())
+    {
+        ui->textBrowser->append("No filename_standing");
+        return;
+    }
+    ui->textBrowser->append("filename_standing");
+
+
+    QFile file_sitting(filename_sitting);
+    if (!file_sitting.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    QFile file_standing(filename_standing);
+    if (!file_standing.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    sit.left_hip_angle.clear();
+    sit.right_hip_angle.clear();
+    sit.left_knee_angle.clear();
+    sit.right_knee_angle.clear();
+
+    stand.left_hip_angle.clear();
+    stand.right_hip_angle.clear();
+    stand.left_knee_angle.clear();
+    stand.right_knee_angle.clear();
+
+    while (!file_sitting.atEnd()) {
+        QString line = file_sitting.readLine();
+        QStringList qs_list = line.split(',');
+
+        sit.left_hip_angle.push_back(qs_list.at(1).toDouble());
+        sit.right_hip_angle.push_back(qs_list.at(3).toDouble());
+        sit.left_knee_angle.push_back(qs_list.at(5).toDouble());
+        sit.right_knee_angle.push_back(qs_list.at(7).toDouble());
+    }
+    while (!file_standing.atEnd()) {
+        QString line = file_standing.readLine();
+        QStringList qs_list = line.split(',');
+
+        stand.left_hip_angle.push_back(qs_list.at(1).toDouble());
+        stand.right_hip_angle.push_back(qs_list.at(3).toDouble());
+        stand.left_knee_angle.push_back(qs_list.at(5).toDouble());
+        stand.right_knee_angle.push_back(qs_list.at(7).toDouble());
+    }
+
+
+    std::vector<double> time;
+    for(int i = 0; i<stand.left_hip_angle.size(); i++){time.push_back(i);}
+
+    curve_stand_LH.setSamples(time.data(), stand.left_hip_angle.data(), stand.left_hip_angle  .size());
+    curve_stand_LH.setPen( Qt::blue, 2 );
+    curve_stand_LH.attach( ui->qwtPlot_motion_model_parameter_stand );
+    curve_stand_RH.setSamples(time.data(), stand.right_hip_angle.data(), stand.right_hip_angle .size());
+    curve_stand_RH.setPen( Qt::red, 2 ),            curve_stand_RH.attach( ui->qwtPlot_motion_model_parameter_stand );
+    curve_stand_LK.setSamples(time.data(), stand.left_knee_angle.data(), stand.left_knee_angle.size());
+    curve_stand_LK.setPen( Qt::green, 2 );
+    curve_stand_LK.attach( ui->qwtPlot_motion_model_parameter_stand );
+    curve_stand_RK.setSamples(time.data(), stand.right_knee_angle.data(), stand.right_knee_angle.size());
+    curve_stand_RK.setPen( Qt::darkYellow, 2 );
+    curve_stand_RK.attach( ui->qwtPlot_motion_model_parameter_stand );
+
+
+
+    curve_sit_LH.setSamples(time.data(), sit.left_hip_angle.data(), sit.left_hip_angle  .size());
+    curve_sit_LH.setPen( Qt::blue, 2 );
+    curve_sit_LH.attach( ui->qwtPlot_motion_model_parameter_sit );
+    curve_sit_RH.setSamples(time.data(), sit.right_hip_angle.data(), sit.right_hip_angle .size());
+    curve_sit_RH.setPen( Qt::red, 2 ),            curve_sit_RH.attach( ui->qwtPlot_motion_model_parameter_sit );
+    curve_sit_LK.setSamples(time.data(), sit.left_knee_angle.data(), sit.left_knee_angle.size());
+    curve_sit_LK.setPen( Qt::green, 2 );
+    curve_sit_LK.attach( ui->qwtPlot_motion_model_parameter_sit );
+    curve_sit_RK.setSamples(time.data(), sit.right_knee_angle.data(), sit.right_knee_angle.size());
+    curve_sit_RK.setPen( Qt::darkYellow, 2 );
+    curve_sit_RK.attach( ui->qwtPlot_motion_model_parameter_sit );
+
+
+
+    //    for ( int axis = 0; axis < QwtPlot::axisCnt; axis++ )
+    //        ui->qwtPlot_motion_model_parameter_stand->setAxisAutoScale(axis);
+
+
+
+    //    ui->textBrowser->append(QString::number(model_left_hip_angle_mean.size()));
+    ui->qwtPlot_motion_model_parameter_stand->replot();
+    ui->qwtPlot_motion_model_parameter_sit->replot();
+
+    ui->textBrowser->append(QString::number(stand.right_knee_angle.at(50)));
+
 }
