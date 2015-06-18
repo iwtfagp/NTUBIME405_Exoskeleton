@@ -40,23 +40,8 @@ class Ui_qt_exoskeleton
 public:
     QWidget *centralWidget;
     QGridLayout *gridLayout_19;
-    QGroupBox *groupBox_2;
-    QGridLayout *gridLayout_13;
-    QPushButton *pushButton_close;
-    QPushButton *pushButton_enable;
-    QPushButton *pushButton_standing;
-    QPushButton *pushButton_extension;
-    QPushButton *pushButton_connect;
-    QLabel *label_connection;
-    QPushButton *pushButton_period;
-    QPushButton *pushButton_record;
-    QPushButton *pushButton_sitting;
-    QPushButton *pushButton_flexion;
-    QPushButton *pushButton_calibration;
-    QLineEdit *lineEdit;
-    QSpacerItem *verticalSpacer;
-    QTextBrowser *textBrowser;
     QGridLayout *gridLayout_16;
+    QTextBrowser *textBrowser;
     QTabWidget *tabWidget;
     QWidget *tab;
     QGridLayout *gridLayout_9;
@@ -172,6 +157,22 @@ public:
     QPushButton *pushButton_loadModel_Stand_sit;
     QLCDNumber *lcdNumber_mode_number;
     QLCDNumber *lcdNumber_mode_number_now;
+    QGroupBox *groupBox_2;
+    QGridLayout *gridLayout_13;
+    QSpacerItem *verticalSpacer;
+    QPushButton *pushButton_enable;
+    QPushButton *pushButton_standing;
+    QPushButton *pushButton_extension;
+    QPushButton *pushButton_connect;
+    QLabel *label_connection;
+    QPushButton *pushButton_close;
+    QPushButton *pushButton_period;
+    QPushButton *pushButton_record;
+    QPushButton *pushButton_sitting;
+    QPushButton *pushButton_flexion;
+    QPushButton *pushButton_calibration;
+    QLineEdit *lineEdit;
+    QPushButton *pushButton_current;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -180,7 +181,7 @@ public:
     {
         if (qt_exoskeleton->objectName().isEmpty())
             qt_exoskeleton->setObjectName(QStringLiteral("qt_exoskeleton"));
-        qt_exoskeleton->resize(1037, 673);
+        qt_exoskeleton->resize(1037, 683);
         qt_exoskeleton->setMaximumSize(QSize(16777215, 873));
         centralWidget = new QWidget(qt_exoskeleton);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
@@ -188,115 +189,23 @@ public:
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
         gridLayout_19->setObjectName(QStringLiteral("gridLayout_19"));
-        groupBox_2 = new QGroupBox(centralWidget);
-        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setMaximumSize(QSize(300, 16777215));
-        QFont font;
-        font.setFamily(QString::fromUtf8("\345\276\256\350\273\237\346\255\243\351\273\221\351\253\224"));
-        font.setPointSize(14);
-        font.setBold(true);
-        font.setWeight(75);
-        groupBox_2->setFont(font);
-        gridLayout_13 = new QGridLayout(groupBox_2);
-        gridLayout_13->setSpacing(6);
-        gridLayout_13->setContentsMargins(11, 11, 11, 11);
-        gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
-        pushButton_close = new QPushButton(groupBox_2);
-        pushButton_close->setObjectName(QStringLiteral("pushButton_close"));
-        pushButton_close->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_close, 8, 0, 1, 1);
-
-        pushButton_enable = new QPushButton(groupBox_2);
-        pushButton_enable->setObjectName(QStringLiteral("pushButton_enable"));
-        pushButton_enable->setFont(font);
-        pushButton_enable->setCheckable(true);
-        pushButton_enable->setChecked(false);
-        pushButton_enable->setAutoRepeat(false);
-        pushButton_enable->setDefault(false);
-        pushButton_enable->setFlat(false);
-
-        gridLayout_13->addWidget(pushButton_enable, 2, 0, 1, 1);
-
-        pushButton_standing = new QPushButton(groupBox_2);
-        pushButton_standing->setObjectName(QStringLiteral("pushButton_standing"));
-        pushButton_standing->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_standing, 4, 0, 1, 1);
-
-        pushButton_extension = new QPushButton(groupBox_2);
-        pushButton_extension->setObjectName(QStringLiteral("pushButton_extension"));
-        pushButton_extension->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_extension, 6, 0, 1, 1);
-
-        pushButton_connect = new QPushButton(groupBox_2);
-        pushButton_connect->setObjectName(QStringLiteral("pushButton_connect"));
-        pushButton_connect->setFont(font);
-        pushButton_connect->setAutoDefault(false);
-
-        gridLayout_13->addWidget(pushButton_connect, 0, 0, 1, 1);
-
-        label_connection = new QLabel(groupBox_2);
-        label_connection->setObjectName(QStringLiteral("label_connection"));
-        label_connection->setFont(font);
-        label_connection->setTextFormat(Qt::PlainText);
-        label_connection->setAlignment(Qt::AlignCenter);
-
-        gridLayout_13->addWidget(label_connection, 1, 0, 1, 1);
-
-        pushButton_period = new QPushButton(groupBox_2);
-        pushButton_period->setObjectName(QStringLiteral("pushButton_period"));
-
-        gridLayout_13->addWidget(pushButton_period, 12, 0, 1, 1);
-
-        pushButton_record = new QPushButton(groupBox_2);
-        pushButton_record->setObjectName(QStringLiteral("pushButton_record"));
-
-        gridLayout_13->addWidget(pushButton_record, 13, 0, 1, 1);
-
-        pushButton_sitting = new QPushButton(groupBox_2);
-        pushButton_sitting->setObjectName(QStringLiteral("pushButton_sitting"));
-        pushButton_sitting->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_sitting, 5, 0, 1, 1);
-
-        pushButton_flexion = new QPushButton(groupBox_2);
-        pushButton_flexion->setObjectName(QStringLiteral("pushButton_flexion"));
-        pushButton_flexion->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_flexion, 7, 0, 1, 1);
-
-        pushButton_calibration = new QPushButton(groupBox_2);
-        pushButton_calibration->setObjectName(QStringLiteral("pushButton_calibration"));
-        pushButton_calibration->setFont(font);
-
-        gridLayout_13->addWidget(pushButton_calibration, 3, 0, 1, 1);
-
-        lineEdit = new QLineEdit(groupBox_2);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
-
-        gridLayout_13->addWidget(lineEdit, 11, 0, 1, 1);
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_13->addItem(verticalSpacer, 10, 0, 1, 1);
-
-
-        gridLayout_19->addWidget(groupBox_2, 1, 2, 1, 1);
-
-        textBrowser = new QTextBrowser(centralWidget);
-        textBrowser->setObjectName(QStringLiteral("textBrowser"));
-        textBrowser->setMaximumSize(QSize(16777215, 100));
-        textBrowser->setFont(font);
-
-        gridLayout_19->addWidget(textBrowser, 2, 2, 1, 1);
-
         gridLayout_16 = new QGridLayout();
         gridLayout_16->setSpacing(6);
         gridLayout_16->setObjectName(QStringLiteral("gridLayout_16"));
 
         gridLayout_19->addLayout(gridLayout_16, 0, 0, 1, 1);
+
+        textBrowser = new QTextBrowser(centralWidget);
+        textBrowser->setObjectName(QStringLiteral("textBrowser"));
+        textBrowser->setMaximumSize(QSize(16777215, 100));
+        QFont font;
+        font.setFamily(QString::fromUtf8("\345\276\256\350\273\237\346\255\243\351\273\221\351\253\224"));
+        font.setPointSize(14);
+        font.setBold(true);
+        font.setWeight(75);
+        textBrowser->setFont(font);
+
+        gridLayout_19->addWidget(textBrowser, 2, 2, 1, 1);
 
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
@@ -813,7 +722,7 @@ public:
         spinBox_parameter_mode_speed->setObjectName(QStringLiteral("spinBox_parameter_mode_speed"));
         spinBox_parameter_mode_speed->setMinimum(10);
         spinBox_parameter_mode_speed->setMaximum(9999);
-        spinBox_parameter_mode_speed->setValue(100);
+        spinBox_parameter_mode_speed->setValue(500);
 
         gridLayout_25->addWidget(spinBox_parameter_mode_speed, 1, 0, 1, 1);
 
@@ -846,7 +755,7 @@ public:
 
         spinBox = new QSpinBox(tab_3);
         spinBox->setObjectName(QStringLiteral("spinBox"));
-        spinBox->setValue(6);
+        spinBox->setValue(5);
 
         gridLayout_20->addWidget(spinBox, 0, 1, 1, 1);
 
@@ -948,6 +857,103 @@ public:
 
         gridLayout_19->addWidget(tabWidget, 0, 1, 3, 1);
 
+        groupBox_2 = new QGroupBox(centralWidget);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        groupBox_2->setMaximumSize(QSize(300, 16777215));
+        groupBox_2->setFont(font);
+        gridLayout_13 = new QGridLayout(groupBox_2);
+        gridLayout_13->setSpacing(6);
+        gridLayout_13->setContentsMargins(11, 11, 11, 11);
+        gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_13->addItem(verticalSpacer, 10, 0, 1, 1);
+
+        pushButton_enable = new QPushButton(groupBox_2);
+        pushButton_enable->setObjectName(QStringLiteral("pushButton_enable"));
+        pushButton_enable->setFont(font);
+        pushButton_enable->setCheckable(true);
+        pushButton_enable->setChecked(false);
+        pushButton_enable->setAutoRepeat(false);
+        pushButton_enable->setDefault(false);
+        pushButton_enable->setFlat(false);
+
+        gridLayout_13->addWidget(pushButton_enable, 2, 0, 1, 1);
+
+        pushButton_standing = new QPushButton(groupBox_2);
+        pushButton_standing->setObjectName(QStringLiteral("pushButton_standing"));
+        pushButton_standing->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_standing, 4, 0, 1, 1);
+
+        pushButton_extension = new QPushButton(groupBox_2);
+        pushButton_extension->setObjectName(QStringLiteral("pushButton_extension"));
+        pushButton_extension->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_extension, 6, 0, 1, 1);
+
+        pushButton_connect = new QPushButton(groupBox_2);
+        pushButton_connect->setObjectName(QStringLiteral("pushButton_connect"));
+        pushButton_connect->setFont(font);
+        pushButton_connect->setAutoDefault(false);
+
+        gridLayout_13->addWidget(pushButton_connect, 0, 0, 1, 1);
+
+        label_connection = new QLabel(groupBox_2);
+        label_connection->setObjectName(QStringLiteral("label_connection"));
+        label_connection->setFont(font);
+        label_connection->setTextFormat(Qt::PlainText);
+        label_connection->setAlignment(Qt::AlignCenter);
+
+        gridLayout_13->addWidget(label_connection, 1, 0, 1, 1);
+
+        pushButton_close = new QPushButton(groupBox_2);
+        pushButton_close->setObjectName(QStringLiteral("pushButton_close"));
+        pushButton_close->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_close, 8, 0, 1, 1);
+
+        pushButton_period = new QPushButton(groupBox_2);
+        pushButton_period->setObjectName(QStringLiteral("pushButton_period"));
+
+        gridLayout_13->addWidget(pushButton_period, 12, 0, 1, 1);
+
+        pushButton_record = new QPushButton(groupBox_2);
+        pushButton_record->setObjectName(QStringLiteral("pushButton_record"));
+
+        gridLayout_13->addWidget(pushButton_record, 13, 0, 1, 1);
+
+        pushButton_sitting = new QPushButton(groupBox_2);
+        pushButton_sitting->setObjectName(QStringLiteral("pushButton_sitting"));
+        pushButton_sitting->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_sitting, 5, 0, 1, 1);
+
+        pushButton_flexion = new QPushButton(groupBox_2);
+        pushButton_flexion->setObjectName(QStringLiteral("pushButton_flexion"));
+        pushButton_flexion->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_flexion, 7, 0, 1, 1);
+
+        pushButton_calibration = new QPushButton(groupBox_2);
+        pushButton_calibration->setObjectName(QStringLiteral("pushButton_calibration"));
+        pushButton_calibration->setFont(font);
+
+        gridLayout_13->addWidget(pushButton_calibration, 3, 0, 1, 1);
+
+        lineEdit = new QLineEdit(groupBox_2);
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+
+        gridLayout_13->addWidget(lineEdit, 11, 0, 1, 1);
+
+        pushButton_current = new QPushButton(groupBox_2);
+        pushButton_current->setObjectName(QStringLiteral("pushButton_current"));
+
+        gridLayout_13->addWidget(pushButton_current, 14, 0, 1, 1);
+
+
+        gridLayout_19->addWidget(groupBox_2, 1, 2, 1, 1);
+
         qt_exoskeleton->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(qt_exoskeleton);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -971,19 +977,6 @@ public:
     void retranslateUi(QMainWindow *qt_exoskeleton)
     {
         qt_exoskeleton->setWindowTitle(QApplication::translate("qt_exoskeleton", "qt_exoskeleton", 0));
-        groupBox_2->setTitle(QApplication::translate("qt_exoskeleton", "Panel", 0));
-        pushButton_close->setText(QApplication::translate("qt_exoskeleton", "Close", 0));
-        pushButton_enable->setText(QApplication::translate("qt_exoskeleton", "Enable", 0));
-        pushButton_standing->setText(QApplication::translate("qt_exoskeleton", "Standing", 0));
-        pushButton_extension->setText(QApplication::translate("qt_exoskeleton", "Extension Limit", 0));
-        pushButton_connect->setText(QApplication::translate("qt_exoskeleton", "Connect", 0));
-        label_connection->setText(QApplication::translate("qt_exoskeleton", "\345\260\232\346\234\252\351\200\243\347\267\232", 0));
-        pushButton_period->setText(QApplication::translate("qt_exoskeleton", "ONE", 0));
-        pushButton_record->setText(QApplication::translate("qt_exoskeleton", "Record Bad Motion", 0));
-        pushButton_sitting->setText(QApplication::translate("qt_exoskeleton", "Sitting", 0));
-        pushButton_flexion->setText(QApplication::translate("qt_exoskeleton", "Flexion Limit", 0));
-        pushButton_calibration->setText(QApplication::translate("qt_exoskeleton", "Calibration", 0));
-        lineEdit->setText(QApplication::translate("qt_exoskeleton", "PRESS", 0));
         groupBox_left_hip->setTitle(QApplication::translate("qt_exoskeleton", "\345\267\246\351\253\226\351\227\234\347\257\200", 0));
         lineEdit_left_hip_flexion->setText(QApplication::translate("qt_exoskeleton", "120", 0));
         label_left_hip_flexion->setText(QApplication::translate("qt_exoskeleton", "\345\275\216\346\233\262\346\245\265\351\231\220(drgee)", 0));
@@ -1047,6 +1040,20 @@ public:
         groupBox_5->setTitle(QApplication::translate("qt_exoskeleton", "\350\265\260\350\267\257", 0));
         pushButton_loadModel_Stand_sit->setText(QApplication::translate("qt_exoskeleton", "LOAD model", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("qt_exoskeleton", "\345\217\203\346\225\270\345\214\226\346\250\241\347\265\204", 0));
+        groupBox_2->setTitle(QApplication::translate("qt_exoskeleton", "Panel", 0));
+        pushButton_enable->setText(QApplication::translate("qt_exoskeleton", "Enable", 0));
+        pushButton_standing->setText(QApplication::translate("qt_exoskeleton", "Standing", 0));
+        pushButton_extension->setText(QApplication::translate("qt_exoskeleton", "Extension Limit", 0));
+        pushButton_connect->setText(QApplication::translate("qt_exoskeleton", "Connect", 0));
+        label_connection->setText(QApplication::translate("qt_exoskeleton", "\345\260\232\346\234\252\351\200\243\347\267\232", 0));
+        pushButton_close->setText(QApplication::translate("qt_exoskeleton", "Close", 0));
+        pushButton_period->setText(QApplication::translate("qt_exoskeleton", "ONE", 0));
+        pushButton_record->setText(QApplication::translate("qt_exoskeleton", "Period", 0));
+        pushButton_sitting->setText(QApplication::translate("qt_exoskeleton", "Sitting", 0));
+        pushButton_flexion->setText(QApplication::translate("qt_exoskeleton", "Flexion Limit", 0));
+        pushButton_calibration->setText(QApplication::translate("qt_exoskeleton", "Calibration", 0));
+        lineEdit->setText(QApplication::translate("qt_exoskeleton", "PRESS", 0));
+        pushButton_current->setText(QApplication::translate("qt_exoskeleton", "current record?", 0));
     } // retranslateUi
 
 };

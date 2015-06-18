@@ -113,6 +113,13 @@ qt_exoskeleton::qt_exoskeleton(QWidget *parent) :
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(updateView()));
     timer->setInterval(100);
     timer->start();
+
+    timer_current  = new QTimer(this);
+    timer_current->stop();
+    timer_current->setInterval(20);
+    QObject::connect(timer_current, SIGNAL(timeout()), this, SLOT(updateCurrentView()));
+
+
 }
 
 
@@ -228,6 +235,7 @@ void qt_exoskeleton::on_pushButton_close_clicked()
     ui->lineEdit_right_knee_flexion->setEnabled(true);
 
 }
+
 
 
 void qt_exoskeleton::updateView()
@@ -923,22 +931,22 @@ void qt_exoskeleton::updateMpuView()
         //        wave_display(&down);
 
     }
-    else if(Roll_angle_temp < 40 && Roll_angle_temp>15)
+    else if(Roll_angle_temp < 30 && Roll_angle_temp>15)
     {
         str_state_mode = "up";
         FSM_state_number_will = 3;
         model_input(&up, 10000);
-        up.hip_sin_amp = 50 + Roll_angle_temp;
-        up.knee_sin_amp = 75 + Roll_angle_temp;
+        up.hip_sin_amp = 50 + Roll_angle_temp/5;
+        up.knee_sin_amp = 75 + Roll_angle_temp/5;
         wave_display(&up);
 
     }
-    else if(Roll_angle_temp>40)
+    else if(Roll_angle_temp>30)
     {
         str_state_mode = "walk";
         FSM_state_number_will = 2;
-        walk.hip_sin_amp = 30 + Roll_angle_temp;
-        walk.knee_sin_amp = 65 + Roll_angle_temp;
+        walk.hip_sin_amp = 30 + Roll_angle_temp/5;
+        walk.knee_sin_amp = 65 + Roll_angle_temp/5;
         model_input(&walk, 10000);
         //        wave_display(&walk);
     }
@@ -1105,4 +1113,66 @@ void qt_exoskeleton::on_pushButton_loadModel_Stand_sit_clicked()
 
     ui->textBrowser->append(QString::number(stand.right_knee_angle.at(50)));
 
+}
+
+
+void qt_exoskeleton::file_current_save()
+{
+    file_current->close();
+}
+void qt_exoskeleton::file_current_open()
+{
+    //get current date
+    QLocale locale  = QLocale(QLocale::English);
+    QDate date = QDate::currentDate();
+    QString dateString = locale.toString(date, "yyyyMMdd");
+    QTime time = QTime::currentTime();
+    QString timeString = locale.toString(time, "hhmmss");
+    QString username = ui->lineEdit_username->text();
+    QString filepath = "./Data/" + username + "_" + dateString + "_" + timeString + "_currentdata.txt";
+    ui->textBrowser->append(filepath);
+
+
+    if(!QDir("Data").exists())
+        QDir().mkdir("Data");
+    file_current = new QFile(filepath);
+    //        b_saving_file = true;
+
+
+    file_current->open(QIODevice::WriteOnly | QIODevice::Text);
+
+}
+
+void qt_exoskeleton::updateCurrentView()
+{
+    QTextStream out(file_current);
+    out <<  QString::number(ui->lcdNumber_mode_number->value()) + ", " +
+            QString::number(ui->lcdNumber_left_hip_current->value()) + ", " +
+            QString::number(ui->lcdNumber_right_hip_current->value()) + ", " +
+            QString::number(ui->lcdNumber_left_knee_current->value()) + ", " +
+            QString::number(ui->lcdNumber_right_knee_current->value()) + ", " +
+
+            QString::number(ui->lcdNumber_left_hip_position->value()) + ", " +
+            QString::number(ui->lcdNumber_right_hip_position->value()) + ", " +
+            QString::number(ui->lcdNumber_left_knee_position->value()) + ", " +
+            QString::number(ui->lcdNumber_right_knee_position->value());
+    out<<endl;
+}
+
+
+void qt_exoskeleton::on_pushButton_current_clicked()
+{
+    if(timer_current->isActive())
+    {
+        timer_current->stop();
+        ui->pushButton_current->setText("current record?");
+        file_current_save();
+    }
+    else
+    {
+        file_current_open();
+        timer_current->start();
+        ui->pushButton_current->setText("current recording");
+
+    }
 }

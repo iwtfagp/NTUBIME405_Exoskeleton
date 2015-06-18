@@ -34,6 +34,7 @@ public:
 private slots:
     void updateView();
     void updateModel();
+    void updateCurrentView();
     void on_pushButton_calibration_clicked();
     void on_pushButton_enable_clicked();
     void on_pushButton_connect_clicked();
@@ -57,19 +58,24 @@ private slots:
 
     void on_pushButton_loadModel_Stand_sit_clicked();
 
+    void on_pushButton_current_clicked();
+
 private:
 
+    void file_current_save();
+    void file_current_open();
+    QFile *file_current;
     double Roll_angle = 0, Yaw_angle = 0, Pitch_angle = 0;
     double Roll_angle_init = 0, Yaw_angle_init = 0, Pitch_angle_init = 0;
     double Roll_angle_temp = 0, Yaw_angle_temp = 0, Pitch_angle_temp = 0;
 
-    int FSM_state_number_now = 0;
+
     int FSM_state_number_will = 0;
 
     Ui::qt_exoskeleton *ui;
     QTimer* timer;
     QTimer* timer_model;
-    QTimer* timer_mpu;
+    QTimer *timer_mpu, *timer_current;
     MPU_9150 *mpu;
 
 
